@@ -14,6 +14,22 @@ const AdminDashboard = () => {
   const userInfo = JSON.parse(localStorage.getItem('userInfo'));
   const config = { headers: { Authorization: `Bearer ${userInfo?.token}` } };
 
+  // Human-Centric Theme Variables
+  const theme = {
+    bg: '#FAFAF9',      // Stone white
+    surface: '#FFFFFF', 
+    textMain: '#292524', // Warm charcoal
+    textSec: '#57534E',  // Stone gray
+    primary: '#6366F1',  // Indigo
+    primarySoft: '#E0E7FF',
+    success: '#10B981',
+    successSoft: '#ECFDF5',
+    warning: '#F59E0B',
+    warningSoft: '#FFFBEB',
+    danger: '#EF4444',
+    border: '#E7E5E4',
+  };
+
   const fetchData = async () => {
     try {
       const userRes = await axios.get('https://mental-wellbeing-app-sandy.vercel.app/api/admin/users', config);
@@ -42,70 +58,85 @@ const AdminDashboard = () => {
     }
   };
 
-  const colors = { primary: '#4f46e5', danger: '#ef4444', border: '#e2e8f0', bg: '#f8fafc', success: '#10b981', offline: '#94a3b8' };
-  const cardStyle = { background: '#fff', padding: '24px', borderRadius: '16px', border: `1px solid ${colors.border}`, marginBottom: '20px' };
+  const cardStyle = { 
+    background: theme.surface, 
+    padding: '32px', 
+    borderRadius: '24px', 
+    border: `1px solid ${theme.border}`, 
+    boxShadow: '0 4px 20px rgba(0,0,0,0.03)',
+    marginBottom: '24px' 
+  };
+
+  const inputStyle = { 
+    width: '100%', 
+    padding: '12px 16px', 
+    borderRadius: '12px', 
+    border: `1px solid ${theme.border}`, 
+    backgroundColor: theme.bg,
+    fontSize: '14px',
+    outline: 'none',
+    boxSizing: 'border-box'
+  };
 
   return (
-    <div style={{ padding: '40px', background: colors.bg, minHeight: '100vh', fontFamily: 'Inter, sans-serif' }}>
-      
+    <div style={{ padding: '40px', background: theme.bg, minHeight: '100vh', fontFamily: "'Inter', sans-serif" }}>
+      <style>
+        {`
+          @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap');
+          h2, h3 { font-family: 'Instrument Serif', serif; font-weight: 400; }
+          .admin-table th { font-family: 'Inter', sans-serif; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; color: ${theme.textSec}; }
+        `}
+      </style>
+
       {/* HEADER */}
-      <div style={{ ...cardStyle, display: 'flex', justifyContent: 'space-between', borderLeft: `6px solid ${colors.primary}` }}>
+      <div style={{ ...cardStyle, display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderLeft: `6px solid ${theme.textMain}` }}>
         <div>
-          <h2 style={{ margin: 0 }}>👮 Admin Panel: {userInfo?.name}</h2>
-          <p style={{ color: '#666', fontSize: '14px' }}>Global Requests & Managed Care</p>
+          <h2 style={{ fontSize: '36px', margin: 0, color: theme.textMain }}>Panel <span style={{fontStyle:'italic'}}>Control.</span></h2>
+          <p style={{ color: theme.textSec, fontSize: '15px', marginTop: '4px' }}>Welcome back, {userInfo?.name}</p>
         </div>
-        <button onClick={() => { localStorage.removeItem('userInfo'); navigate('/login'); }} style={{ background: colors.danger, color: 'white', border: 'none', borderRadius: '8px', padding: '10px 20px', cursor: 'pointer' }}>Logout</button>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '24px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px', marginBottom: '32px' }}>
         
         {/* GLOBAL DOCTORS LIST */}
         <div style={cardStyle}>
-          <h3>👨‍⚕️ Global Doctors</h3>
+          <h3 style={{ fontSize: '28px', marginBottom: '20px' }}>Global Network</h3>
           <input 
-            style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd', marginBottom: '15px' }} 
-            placeholder="Search doctors..." 
+            style={{ ...inputStyle, marginBottom: '24px' }} 
+            placeholder="Search by name or specialty..." 
             onChange={(e) => setDoctorSearch(e.target.value)} 
           />
-          <div style={{ maxHeight: '350px', overflowY: 'auto' }}>
+          <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
             {doctors.filter(d => d.name.toLowerCase().includes(doctorSearch.toLowerCase())).map(d => (
-              <div key={d._id} style={{ padding: '15px', borderBottom: '1px solid #f1f1f1', display: 'flex', alignItems: 'flex-start' }}>
+              <div key={d._id} style={{ padding: '20px', borderBottom: `1px solid ${theme.border}`, display: 'flex', alignItems: 'flex-start' }}>
                 <span style={{ 
-                    height: '10px', width: '10px', borderRadius: '50%', marginTop: '6px', 
-                    backgroundColor: d.isAvailable ? colors.success : colors.offline, 
-                    marginRight: '12px', flexShrink: 0 
+                    height: '10px', width: '10px', borderRadius: '50%', marginTop: '8px', 
+                    backgroundColor: d.isAvailable ? theme.success : theme.textSec, 
+                    marginRight: '16px', flexShrink: 0 
                 }}></span>
                 
                 <div style={{ width: '100%' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ fontWeight: '600', color: '#333' }}>{d.name}</span>
-                    <span style={{ fontSize: '10px', padding: '2px 6px', borderRadius: '4px', background: d.isAvailable ? '#ecfdf5' : '#f1f5f9', color: d.isAvailable ? '#047857' : '#64748b' }}>
-                        {d.isAvailable ? 'ONLINE' : 'OFFLINE'}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontWeight: '600', color: theme.textMain, fontSize: '16px' }}>Dr. {d.name}</span>
+                    <span style={{ fontSize: '10px', padding: '4px 10px', borderRadius: '100px', background: d.isAvailable ? theme.successSoft : theme.bg, color: d.isAvailable ? theme.success : theme.textSec, fontWeight: '700' }}>
+                        {d.isAvailable ? 'AVAILABLE' : 'OFFLINE'}
                     </span>
                   </div>
                   
-                  <div style={{ fontSize: '12px', color: '#555', marginTop: '2px' }}>📧 {d.email}</div>
+                  <div style={{ fontSize: '13px', color: theme.textSec, marginTop: '4px' }}>{d.email}</div>
                   
                   {/* STATS ROW */}
-                  <div style={{ display: 'flex', gap: '12px', marginTop: '8px', fontSize: '11px', flexWrap: 'wrap' }}>
-                    {/* Rating */}
-                    <span style={{ display: 'flex', alignItems: 'center', color: '#f59e0b', fontWeight: 'bold' }}>
-                        ⭐ {d.averageRating || '0.0'} <span style={{ color: '#888', fontWeight: 'normal', marginLeft: '4px' }}>({d.reviewCount || 0})</span>
+                  <div style={{ display: 'flex', gap: '8px', marginTop: '16px', flexWrap: 'wrap' }}>
+                    <span style={{ fontSize: '11px', color: theme.warning, fontWeight: '700', background: theme.warningSoft, padding: '4px 10px', borderRadius: '8px' }}>
+                        ⭐ {d.averageRating || '0.0'}
                     </span>
-                    {/* Pending Sessions */}
-                    <span style={{ color: '#d97706', fontWeight: 'bold', background: '#fffbeb', padding: '2px 6px', borderRadius: '4px' }}>
+                    <span style={{ fontSize: '11px', color: theme.primary, fontWeight: '700', background: theme.primarySoft, padding: '4px 10px', borderRadius: '8px' }}>
                         ⏳ {d.pendingSessions || 0} Active
                     </span>
-                    {/* Completed */}
-                    <span style={{ color: '#059669', fontWeight: 'bold', background: '#ecfdf5', padding: '2px 6px', borderRadius: '4px' }}>
-                        ✅ {d.completedSessions || 0} Done
-                    </span>
-                    {/* Total */}
-                    <span style={{ color: '#2563eb', fontWeight: 'bold', background: '#eff6ff', padding: '2px 6px', borderRadius: '4px' }}>
-                        📊 {d.totalSessions || 0} Total
+                    <span style={{ fontSize: '11px', color: theme.textSec, fontWeight: '700', background: theme.bg, padding: '4px 10px', borderRadius: '8px' }}>
+                        ✅ {d.completedSessions || 0} Total
                     </span>
                   </div>
-
                 </div>
               </div>
             ))}
@@ -114,14 +145,16 @@ const AdminDashboard = () => {
 
         {/* PATIENT DIRECTORY */}
         <div style={cardStyle}>
-          <h3>👥 My Patient Directory</h3>
-          <input style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd', marginBottom: '15px' }} placeholder="Search my patients..." onChange={(e) => setDirectorySearch(e.target.value)} />
-          <div style={{ maxHeight: '350px', overflowY: 'auto' }}>
+          <h3 style={{ fontSize: '28px', marginBottom: '20px' }}>Resident Directory</h3>
+          <input style={{ ...inputStyle, marginBottom: '24px' }} placeholder="Search all residents..." onChange={(e) => setDirectorySearch(e.target.value)} />
+          <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
             {allPatients.filter(p => p.name.toLowerCase().includes(directorySearch.toLowerCase())).map(p => (
-              <div key={p._id} style={{ padding: '12px', borderBottom: '1px solid #f1f1f1' }}>
-                <div style={{ fontWeight: 'bold', color: '#2d3748' }}>{p.name}</div>
-                <div style={{ fontSize: '13px', color: '#4a5568', marginTop: '4px' }}>📧 {p.email}</div>
-                <div style={{ fontSize: '12px', color: '#a0aec0' }}>👨‍⚕️ Doctor: {p.assignedDoctor?.name || 'Unassigned'}</div>
+              <div key={p._id} style={{ padding: '16px', borderRadius: '16px', marginBottom: '8px', border: `1px solid ${theme.border}`, background: theme.bg }}>
+                <div style={{ fontWeight: '600', color: theme.textMain, fontSize: '15px' }}>{p.name}</div>
+                <div style={{ fontSize: '13px', color: theme.textSec, marginTop: '2px' }}>{p.email}</div>
+                <div style={{ fontSize: '11px', color: theme.primary, marginTop: '8px', fontWeight: '500' }}>
+                  Managed by: {p.assignedDoctor?.name ? `Dr. ${p.assignedDoctor.name}` : 'Unassigned'}
+                </div>
               </div>
             ))}
           </div>
@@ -130,60 +163,67 @@ const AdminDashboard = () => {
 
       {/* APPOINTMENT REQUESTS TABLE */}
       <div style={cardStyle}>
-        <h3>📅 Appointment Requests</h3>
-        <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '15px' }}>
-          <thead>
-            <tr style={{ background: '#f1f5f9', textAlign: 'left' }}>
-              <th style={{ padding: '15px' }}>Patient</th>
-              <th style={{ padding: '15px' }}>Reason</th>
-              <th style={{ padding: '15px' }}>Assignment</th>
-              <th style={{ padding: '15px' }}>Status & Time</th>
-            </tr>
-          </thead>
-          <tbody>
-            {appointments.map(appt => (
-              <tr key={appt._id} style={{ borderBottom: '1px solid #eee' }}>
-                <td style={{ padding: '15px' }}>
-                    <div style={{ fontWeight: 'bold' }}>{appt.patient?.name}</div>
-                    <div style={{ fontSize: '12px', color: '#666' }}>{appt.patient?.email}</div>
-                </td>
-                <td style={{ padding: '15px' }}>{appt.reason}</td>
-                <td style={{ padding: '15px' }}>
-                  {appt.status === 'Pending' ? (
-                    <div style={{ display: 'flex', gap: '8px' }}>
-                      <select 
-                        style={{ padding: '8px', borderRadius: '6px', border: '1px solid #ddd' }}
-                        onChange={(e) => setSelectedDoctorMap({...selectedDoctorMap, [appt._id]: e.target.value})}
-                      >
-                        <option value="">Select Doctor</option>
-                        {doctors.sort((a, b) => b.isAvailable - a.isAvailable).map(d => (
-                          <option key={d._id} value={d._id} style={{ color: d.isAvailable ? 'black' : '#999' }}>
-                            {d.isAvailable ? '🟢' : '🔴'} {d.name} ({d.pendingSessions} active)
-                          </option>
-                        ))}
-                      </select>
-                      <button onClick={() => handleAssignAppt(appt._id)} style={{ background: '#10b981', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '6px', cursor: 'pointer' }}>Assign</button>
-                    </div>
-                  ) : (
-                    <span style={{ fontWeight: 'bold', color: colors.primary }}>Dr. {appt.doctor?.name}</span>
-                  )}
-                </td>
-                <td style={{ padding: '15px' }}>
-                  {appt.status === 'Pending' ? (
-                    <span style={{ color: '#f59e0b', fontWeight: 'bold', background: '#fffbeb', padding: '4px 8px', borderRadius: '4px' }}>GLOBAL REQUEST</span>
-                  ) : (
-                    <div>
-                        <div style={{ color: '#64748b', fontWeight: 'bold' }}>Handled by {appt.assignedBy?.name}</div>
-                        <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>
-                            🕒 {appt.assignmentDate ? `Assigned: ${new Date(appt.assignmentDate).toLocaleString()}` : `Updated: ${new Date(appt.updatedAt).toLocaleString()}`}
-                        </div>
-                    </div>
-                  )}
-                </td>
+        <h3 style={{ fontSize: '28px', marginBottom: '24px' }}>Care Coordination</h3>
+        <div style={{ overflowX: 'auto' }}>
+          <table className="admin-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr style={{ textAlign: 'left', borderBottom: `2px solid ${theme.border}` }}>
+                <th style={{ padding: '16px' }}>Patient</th>
+                <th style={{ padding: '16px' }}>Context</th>
+                <th style={{ padding: '16px' }}>Assign Care</th>
+                <th style={{ padding: '16px' }}>Status</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {appointments.map(appt => (
+                <tr key={appt._id} style={{ borderBottom: `1px solid ${theme.border}` }}>
+                  <td style={{ padding: '20px 16px' }}>
+                      <div style={{ fontWeight: '600', color: theme.textMain, fontSize: '14px' }}>{appt.patient?.name}</div>
+                      <div style={{ fontSize: '12px', color: theme.textSec }}>{appt.patient?.email}</div>
+                  </td>
+                  <td style={{ padding: '20px 16px', fontSize: '14px', color: theme.textSec }}>
+                    {appt.reason}
+                  </td>
+                  <td style={{ padding: '20px 16px' }}>
+                    {appt.status === 'Pending' ? (
+                      <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                        <select 
+                          style={{ ...inputStyle, width: 'auto', padding: '8px 12px' }}
+                          onChange={(e) => setSelectedDoctorMap({...selectedDoctorMap, [appt._id]: e.target.value})}
+                        >
+                          <option value="">Select Professional</option>
+                          {doctors.sort((a, b) => b.isAvailable - a.isAvailable).map(d => (
+                            <option key={d._id} value={d._id}>
+                              {d.isAvailable ? '🟢' : '🔴'} {d.name} ({d.pendingSessions} active)
+                            </option>
+                          ))}
+                        </select>
+                        <button 
+                          onClick={() => handleAssignAppt(appt._id)} 
+                          style={{ background: theme.textMain, color: 'white', border: 'none', padding: '10px 20px', borderRadius: '12px', cursor: 'pointer', fontSize: '13px', fontWeight: '500' }}
+                        >
+                          Confirm
+                        </button>
+                      </div>
+                    ) : (
+                      <span style={{ fontWeight: '600', color: theme.primary, fontSize: '14px' }}>Dr. {appt.doctor?.name}</span>
+                    )}
+                  </td>
+                  <td style={{ padding: '20px 16px' }}>
+                    {appt.status === 'Pending' ? (
+                      <span style={{ fontSize: '10px', color: theme.warning, fontWeight: '700', background: theme.warningSoft, padding: '4px 10px', borderRadius: '100px' }}>PENDING REVIEW</span>
+                    ) : (
+                      <div style={{ fontSize: '11px', color: theme.textSec }}>
+                        Assigned by {appt.assignedBy?.name} <br/>
+                        <span style={{ opacity: 0.6 }}>{new Date(appt.updatedAt).toLocaleDateString()}</span>
+                      </div>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

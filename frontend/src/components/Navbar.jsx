@@ -1,9 +1,8 @@
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
   const navigate = useNavigate();
-  
-  // We parse this inside the component body to get the latest data on each render
   const userInfo = JSON.parse(localStorage.getItem('userInfo'));
 
   const logoutHandler = () => {
@@ -11,7 +10,6 @@ const Navbar = () => {
     navigate('/login');
   };
 
-  // Helper to get the correct dashboard path based on role
   const getDashboardPath = () => {
     if (!userInfo) return '/login';
     if (userInfo.role === 'admin') return '/admin-dashboard';
@@ -19,43 +17,79 @@ const Navbar = () => {
     return '/patient-dashboard';
   };
 
+  // Human-Centric Theme Matching
+  const theme = {
+    bg: 'rgba(250, 250, 249, 0.8)', // Translucent stone/paper
+    textMain: '#292524', // Warm charcoal
+    textSec: '#57534E',  // Stone gray
+    primary: '#6366F1',  // Indigo
+    danger: '#ef4444',
+    border: '#E7E5E4',
+  };
+
   const navStyle = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: '15px 50px',
-    background: '#ffffff',
-    boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+    padding: '20px 40px',
+    backgroundColor: theme.bg,
+    backdropFilter: 'blur(10px)', // Adds a soft glass effect
+    borderBottom: `1px solid ${theme.border}`,
     position: 'sticky',
     top: 0,
-    zIndex: 1000
+    zIndex: 1000,
+    fontFamily: "'Inter', sans-serif"
   };
 
   const linkStyle = {
     textDecoration: 'none',
-    color: '#4a90e2',
-    fontWeight: '600',
-    margin: '0 15px',
-    cursor: 'pointer'
+    color: theme.textSec,
+    fontWeight: '500',
+    fontSize: '15px',
+    marginLeft: '30px',
+    transition: 'color 0.2s ease',
+    cursor: 'pointer',
+    border: 'none',
+    background: 'none'
+  };
+
+  const logoStyle = {
+    textDecoration: 'none',
+    fontFamily: "'Instrument Serif', serif",
+    fontSize: '26px',
+    fontStyle: 'italic',
+    color: theme.textMain,
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px'
+  };
+
+  const joinBtnStyle = {
+    ...linkStyle,
+    backgroundColor: theme.textMain,
+    color: '#ffffff',
+    padding: '10px 24px',
+    borderRadius: '50px',
+    fontWeight: '500',
+    transition: 'transform 0.2s ease'
   };
 
   return (
     <nav style={navStyle}>
-      {/* Clicking the logo now takes users to their specific dashboard if logged in */}
-      <Link to={userInfo ? getDashboardPath() : "/"} style={{ ...linkStyle, fontSize: '22px', color: '#333' }}>
-        🧠 MindCare
+      {/* Brand Logo */}
+      <Link to={userInfo ? getDashboardPath() : "/"} style={logoStyle}>
+        Mindful.
       </Link>
       
-      <div>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
         <Link to="/" style={linkStyle}>Home</Link>
         
         {userInfo ? (
           <>
-            {/* Added a dynamic Dashboard link so users don't get stuck on a blank page */}
             <Link to={getDashboardPath()} style={linkStyle}>Dashboard</Link>
             <button 
               onClick={logoutHandler} 
-              style={{ ...linkStyle, border: 'none', background: 'none', color: '#e53e3e', fontSize: '16px' }}
+              style={{ ...linkStyle, color: theme.danger }}
             >
               Logout
             </button>
@@ -63,7 +97,14 @@ const Navbar = () => {
         ) : (
           <>
             <Link to="/login" style={linkStyle}>Login</Link>
-            <Link to="/register" style={{ ...linkStyle, background: '#4a90e2', color: 'white', padding: '8px 18px', borderRadius: '8px' }}>Join Now</Link>
+            <Link 
+              to="/register" 
+              style={joinBtnStyle}
+              onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
+              onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
+            >
+              Join Now
+            </Link>
           </>
         )}
       </div>

@@ -5,7 +5,20 @@ import { useNavigate } from 'react-router-dom';
 const PatientDashboard = () => {
   const navigate = useNavigate();
   
-  // State Management
+  // Theme Variables (Matching Home/Login)
+  const theme = {
+    bg: '#FAFAF9',
+    surface: '#FFFFFF',
+    textMain: '#292524',
+    textSec: '#57534E',
+    primary: '#6366F1',
+    primarySoft: '#E0E7FF',
+    danger: '#ef4444',
+    dangerSoft: '#FFF1F2',
+    success: '#10b981',
+    border: '#E7E5E4'
+  };
+
   const [user, setUser] = useState({});
   const [quote, setQuote] = useState('');
   const [tasks, setTasks] = useState([]);
@@ -13,11 +26,7 @@ const PatientDashboard = () => {
   const [newAppt, setNewAppt] = useState({ date: '', time: '', reason: '' });
   const [contacts, setContacts] = useState([]);
   const [newContact, setNewContact] = useState({ name: '', phone: '' });
-
-  // Rating State
   const [ratingInput, setRatingInput] = useState({}); 
-
-  // Search States
   const [historySearch, setHistorySearch] = useState('');
   const [ongoingSearch, setOngoingSearch] = useState('');
 
@@ -51,7 +60,7 @@ const PatientDashboard = () => {
     fetchAppointments();
   }, [navigate, fetchTasks, fetchAppointments]);
 
-  // --- ACTIONS ---
+  // Actions
   const handleSOS = () => {
     if (!navigator.geolocation) return alert('Geolocation not supported');
     navigator.geolocation.getCurrentPosition(
@@ -80,31 +89,6 @@ const PatientDashboard = () => {
     } catch (error) { alert(error.response?.data?.message || "Error"); }
   };
 
-  const handleAddContact = async (e) => {
-    e.preventDefault();
-    if (!newContact.name || !newContact.phone) return;
-    const updatedContacts = [...contacts, newContact];
-    try {
-      const { data } = await axios.put('https://mental-wellbeing-app-sandy.vercel.app/api/users/contacts', { contacts: updatedContacts }, config);
-      setContacts(data.emergencyContacts);
-      const updatedUser = { ...userInfo, emergencyContacts: data.emergencyContacts };
-      localStorage.setItem('userInfo', JSON.stringify(updatedUser));
-      setUser(updatedUser);
-      setNewContact({ name: '', phone: '' });
-    } catch (error) { alert('Error saving contact'); }
-  };
-
-  const handleDeleteContact = async (index) => {
-    const updatedContacts = contacts.filter((_, i) => i !== index);
-    try {
-      const { data } = await axios.put('https://mental-wellbeing-app-sandy.vercel.app/api/users/contacts', { contacts: updatedContacts }, config);
-      setContacts(data.emergencyContacts);
-      const updatedUser = { ...userInfo, emergencyContacts: data.emergencyContacts };
-      localStorage.setItem('userInfo', JSON.stringify(updatedUser));
-      setUser(updatedUser);
-    } catch (error) { alert('Error deleting contact'); }
-  };
-
   const handleToggleTask = async (task) => {
     try {
       const updatedTask = { ...task, isCompleted: !task.isCompleted };
@@ -112,8 +96,6 @@ const PatientDashboard = () => {
       setTasks(tasks.map((t) => (t._id === task._id ? updatedTask : t)));
     } catch (error) { alert('Error updating task'); }
   };
-
-  const handleLogout = () => { localStorage.removeItem('userInfo'); navigate('/login'); };
 
   const submitFeedback = async (apptId) => {
       const input = ratingInput[apptId];
@@ -128,7 +110,7 @@ const PatientDashboard = () => {
       } catch (error) { alert("Error submitting feedback"); }
   };
 
-  // --- FILTER LOGIC ---
+  // Filters
   const filteredHistory = appointments.filter(a => a.status === 'Completed' && (
       a.reason?.toLowerCase().includes(historySearch.toLowerCase()) ||
       a.doctor?.name?.toLowerCase().includes(historySearch.toLowerCase())
@@ -139,164 +121,155 @@ const PatientDashboard = () => {
       a.status?.toLowerCase().includes(ongoingSearch.toLowerCase())
   );
 
-  // --- STYLES ---
-  const cardStyle = { background: '#ffffff', padding: '20px', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', border: '1px solid #eee' };
-  const inputStyle = { padding: '10px', borderRadius: '6px', border: '1px solid #ddd', marginBottom: '10px' };
+  const cardStyle = { 
+    background: theme.surface, 
+    padding: '24px', 
+    borderRadius: '24px', 
+    border: `1px solid ${theme.border}`,
+    boxShadow: '0 4px 20px rgba(0,0,0,0.03)'
+  };
 
-  // Helper for Status Badge Color
-  const getStatusStyle = (status) => {
-    switch(status) {
-        case 'Confirmed': return { bg: '#c6f6d5', color: '#22543d' }; // Green
-        case 'Completed': return { bg: '#bee3f8', color: '#2b6cb0' }; // Blue
-        case 'Cancelled': return { bg: '#fed7d7', color: '#9b2c2c' }; // Red
-        default: return { bg: '#feebc8', color: '#744210' };          // Yellow (Pending)
-    }
+  const inputStyle = { 
+    padding: '12px', 
+    borderRadius: '12px', 
+    border: `1px solid ${theme.border}`, 
+    backgroundColor: theme.bg,
+    fontSize: '14px',
+    outline: 'none',
+    width: '100%',
+    boxSizing: 'border-box'
   };
 
   return (
-    <div style={{ padding: '30px', background: '#f8f9fa', minHeight: '100vh', fontFamily: "'Segoe UI', sans-serif" }}>
-      
-      <div style={{ ...cardStyle, display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', borderTop: '4px solid #00acc1' }}>
+    <div style={{ padding: '40px', background: theme.bg, minHeight: '100vh', fontFamily: "'Inter', sans-serif" }}>
+      <style>
+        {`
+          @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap');
+          h2, h4, .serif { font-family: 'Instrument Serif', serif; font-weight: 400; }
+          .status-badge { padding: 4px 10px; borderRadius: 100px; fontSize: 11px; fontWeight: 600; textTransform: uppercase; letterSpacing: 0.5px; }
+        `}
+      </style>
+
+      {/* Header */}
+      <div style={{ ...cardStyle, display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px', borderLeft: `6px solid ${theme.primary}` }}>
         <div>
-          <h2 style={{ margin: 0 }}>👤 Patient Dashboard</h2>
-          <p style={{ margin: '5px 0 0 0', color: '#666' }}>Welcome back: {user?.name}</p>
+          <h2 style={{ fontSize: '32px', margin: 0, color: theme.textMain }}>Welcome, <span style={{fontStyle:'italic'}}>{user?.name}</span></h2>
+          <p style={{ margin: '4px 0 0 0', color: theme.textSec, fontSize: '15px' }}>Your mindful space for the day.</p>
         </div>
-        <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
-            <div style={{ background: '#e0f7fa', padding: '10px 15px', borderRadius: '10px', fontStyle: 'italic', fontSize: '13px' }}>"{quote}"</div>
-            <button onClick={handleLogout} style={{ padding: '8px 15px', background: '#34495e', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Logout</button>
+        <div style={{ background: theme.primarySoft, padding: '12px 20px', borderRadius: '16px', color: theme.primary, fontStyle: 'italic', fontSize: '14px', maxWidth: '300px' }}>
+          "{quote}"
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
         
-        {/* LEFT COLUMN */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '25px' }}>
-          <div style={{ ...cardStyle, background: '#fff5f5', borderColor: '#feb2b2', textAlign: 'center' }}>
-            <h3 style={{ color: '#c53030', margin: '0 0 10px 0' }}>🚨 SOS Assistance</h3>
-            <button onClick={handleSOS} style={{ padding: '12px 30px', background: '#e53e3e', color: 'white', border: 'none', borderRadius: '50px', fontWeight: 'bold', cursor: 'pointer' }}>SEND ALERT</button>
+        {/* Left Column */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+          {/* SOS */}
+          <div style={{ ...cardStyle, background: theme.dangerSoft, border: `1px solid #FECDD3`, textAlign: 'center' }}>
+            <h4 style={{ color: '#9F1239', fontSize: '24px', margin: '0 0 12px 0' }}>Need Immediate Help?</h4>
+            <p style={{ color: '#BE123C', fontSize: '14px', marginBottom: '20px' }}>Clicking this will notify your doctor and emergency contacts.</p>
+            <button onClick={handleSOS} style={{ padding: '14px 40px', background: theme.danger, color: 'white', border: 'none', borderRadius: '50px', fontWeight: '600', cursor: 'pointer', transition: '0.3s' }}>SEND SOS ALERT</button>
           </div>
 
+          {/* Contacts */}
           <div style={cardStyle}>
-            <h4>📞 Trusted Contacts</h4>
-            <form onSubmit={handleAddContact} style={{ display: 'flex', gap: '10px', marginBottom: '15px' }}>
-              <input style={{ flex: 1, ...inputStyle, marginBottom: 0 }} placeholder="Name" value={newContact.name} onChange={e => setNewContact({ ...newContact, name: e.target.value })} required />
-              <input style={{ flex: 1, ...inputStyle, marginBottom: 0 }} placeholder="Phone" value={newContact.phone} onChange={e => setNewContact({ ...newContact, phone: e.target.value })} required />
-              <button type="submit" style={{ padding: '0 15px', background: '#4a90e2', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Add</button>
-            </form>
-            <div style={{ maxHeight: '150px', overflowY: 'auto' }}>
-              {contacts.map((c, i) => (
-                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px', borderBottom: '1px solid #eee' }}>
-                  <span>{c.name}: {c.phone}</span>
-                  <button onClick={() => handleDeleteContact(i)} style={{ color: '#e53e3e', border: 'none', background: 'none', cursor: 'pointer' }}>Remove</button>
-                </div>
-              ))}
+            <h4 style={{ fontSize: '24px', marginBottom: '16px' }}>Trusted Contacts</h4>
+            <div style={{ display: 'flex', gap: '12px', marginBottom: '20px' }}>
+              <input style={inputStyle} placeholder="Name" value={newContact.name} onChange={e => setNewContact({ ...newContact, name: e.target.value })} />
+              <input style={inputStyle} placeholder="Phone" value={newContact.phone} onChange={e => setNewContact({ ...newContact, phone: e.target.value })} />
+              <button onClick={handleAddContact} style={{ padding: '10px 20px', background: theme.textMain, color: 'white', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>Add</button>
             </div>
+            {contacts.map((c, i) => (
+              <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '12px', borderBottom: `1px solid ${theme.border}`, fontSize: '14px' }}>
+                <span><strong>{c.name}</strong> — {c.phone}</span>
+                <button onClick={() => handleDeleteContact(i)} style={{ color: theme.danger, border: 'none', background: 'none', cursor: 'pointer', fontSize: '12px' }}>Remove</button>
+              </div>
+            ))}
           </div>
 
+          {/* Tasks */}
           <div style={cardStyle}>
-            <h4>📝 Care Plan Tasks</h4>
-            {tasks.length === 0 ? <p style={{color:'#888'}}>No tasks.</p> : tasks.map(t => (
-                <div key={t._id} style={{ display: 'flex', gap: '10px', padding: '8px 0', borderBottom: '1px solid #eee' }}>
-                  <input type="checkbox" checked={t.isCompleted} onChange={() => handleToggleTask(t)} />
-                  <span style={{ textDecoration: t.isCompleted ? 'line-through' : 'none', color: t.isCompleted ? '#aaa' : '#333' }}>{t.text}</span>
+            <h4 style={{ fontSize: '24px', marginBottom: '16px' }}>Your Care Plan</h4>
+            {tasks.length === 0 ? <p style={{color: theme.textSec, fontSize: '14px'}}>No active tasks today.</p> : tasks.map(t => (
+                <div key={t._id} style={{ display: 'flex', gap: '12px', padding: '12px 0', borderBottom: `1px solid ${theme.border}`, alignItems: 'center' }}>
+                  <input type="checkbox" checked={t.isCompleted} onChange={() => handleToggleTask(t)} style={{ width: '18px', height: '18px', cursor: 'pointer' }} />
+                  <span style={{ textDecoration: t.isCompleted ? 'line-through' : 'none', color: t.isCompleted ? theme.border : theme.textMain, fontSize: '15px' }}>{t.text}</span>
                 </div>
             ))}
           </div>
         </div>
 
-        {/* RIGHT COLUMN */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '25px' }}>
+        {/* Right Column */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+          {/* Booking */}
           <div style={cardStyle}>
-            <h4>📅 Book Appointment</h4>
-            <form onSubmit={handleBookAppointment} style={{ display: 'flex', flexDirection: 'column' }}>
-              <input type="date" required style={inputStyle} value={newAppt.date} onChange={(e) => setNewAppt({ ...newAppt, date: e.target.value })} />
-              <input type="time" required style={inputStyle} value={newAppt.time} onChange={(e) => setNewAppt({ ...newAppt, time: e.target.value })} />
-              <input type="text" placeholder="Reason" style={inputStyle} value={newAppt.reason} onChange={(e) => setNewAppt({ ...newAppt, reason: e.target.value })} required />
-              <button type="submit" style={{ background: '#4a90e2', color: 'white', border: 'none', padding: '12px', borderRadius: '8px', cursor: 'pointer' }}>Request</button>
+            <h4 style={{ fontSize: '24px', marginBottom: '16px' }}>Request a Session</h4>
+            <form onSubmit={handleBookAppointment} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <input type="date" required style={inputStyle} value={newAppt.date} onChange={(e) => setNewAppt({ ...newAppt, date: e.target.value })} />
+                <input type="time" required style={inputStyle} value={newAppt.time} onChange={(e) => setNewAppt({ ...newAppt, time: e.target.value })} />
+              </div>
+              <input type="text" placeholder="What's on your mind?" style={inputStyle} value={newAppt.reason} onChange={(e) => setNewAppt({ ...newAppt, reason: e.target.value })} required />
+              <button type="submit" style={{ background: theme.primary, color: 'white', border: 'none', padding: '14px', borderRadius: '14px', fontWeight: '600', cursor: 'pointer' }}>Submit Request</button>
             </form>
           </div>
 
-          {/* ONGOING REQUESTS (Updated with Email) */}
+          {/* Ongoing Status */}
           <div style={cardStyle}>
-            <h4>⏳ Appointment Status</h4>
-            <input type="text" placeholder="Search..." style={{width:'100%', padding:'8px', borderRadius:'6px', border:'1px solid #ddd', marginBottom:'10px'}} value={ongoingSearch} onChange={(e) => setOngoingSearch(e.target.value)} />
-            <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
-                {filteredOngoing.map(appt => {
-                  const style = getStatusStyle(appt.status);
-                  return (
-                    <div key={appt._id} style={{ background: '#fcfcfc', padding: '12px', borderRadius: '8px', marginBottom: '10px', border: '1px solid #eee' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <span style={{fontWeight:'bold', fontSize:'13px'}}>{new Date(appt.appointmentDate).toLocaleDateString()}</span>
-                          {/* STATUS BADGE */}
-                          <span style={{ fontSize: '11px', background: style.bg, color: style.color, padding: '2px 6px', borderRadius: '4px', fontWeight: 'bold' }}>
-                            {appt.status.toUpperCase()}
-                          </span>
-                      </div>
-                      <div style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>Reason: {appt.reason}</div>
-                      
-                      {/* Show Doctor info if Confirmed OR Completed */}
-                      {(appt.status === 'Confirmed' || appt.status === 'Completed') && appt.doctor && (
-                          <div style={{ marginTop: '5px', fontSize: '12px', color: style.color }}>
-                              {/* THIS IS THE FIXED LINE: */}
-                              👨‍⚕️ Dr. {appt.doctor.name} | 📧 {appt.doctor.email} | 📞 {appt.doctor.phone}
-                          </div>
-                      )}
+            <h4 style={{ fontSize: '24px', marginBottom: '16px' }}>Appointment Status</h4>
+            <input style={{ ...inputStyle, marginBottom: '16px' }} placeholder="Search requests..." value={ongoingSearch} onChange={(e) => setOngoingSearch(e.target.value)} />
+            <div style={{ maxHeight: '250px', overflowY: 'auto' }}>
+                {filteredOngoing.map(appt => (
+                  <div key={appt._id} style={{ background: theme.bg, padding: '16px', borderRadius: '16px', marginBottom: '12px', border: `1px solid ${theme.border}` }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                        <span style={{fontWeight:'600', fontSize:'14px', color: theme.textMain}}>{new Date(appt.appointmentDate).toLocaleDateString()}</span>
+                        <span className="status-badge" style={{ 
+                          background: appt.status === 'Confirmed' ? '#D1FAE5' : '#FEF3C7', 
+                          color: appt.status === 'Confirmed' ? '#065F46' : '#92400E' 
+                        }}>{appt.status}</span>
                     </div>
-                  );
-                })}
-            </div>
-          </div>
-
-          {/* MEDICAL HISTORY */}
-          <div style={cardStyle}>
-            <h4>📜 Medical History & Feedback</h4>
-            <input type="text" placeholder="Search..." style={{width:'100%', padding:'8px', borderRadius:'6px', border:'1px solid #ddd', marginBottom:'10px'}} value={historySearch} onChange={(e) => setHistorySearch(e.target.value)} />
-            
-            <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
-              {filteredHistory.map(appt => (
-                <div key={appt._id} style={{ background: '#f8fbff', padding: '15px', borderRadius: '8px', marginBottom: '15px', borderLeft: '5px solid #3498db' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <strong>{new Date(appt.appointmentDate).toLocaleDateString()}</strong>
-                    <span style={{ fontSize: '12px', color: '#666' }}>Dr. {appt.doctor?.name}</span>
-                  </div>
-                  <p style={{ margin: '5px 0', fontSize: '13px' }}>Reason: {appt.reason}</p>
-                  <p style={{ fontSize: '13px', background: '#fff', padding: '8px', borderRadius: '4px' }}>Notes: {appt.medicalNotes}</p>
-                  
-                  {/* FEEDBACK SECTION */}
-                  <div style={{ marginTop: '10px', borderTop: '1px solid #eee', paddingTop: '10px' }}>
-                    {appt.rating ? (
-                        <div style={{ color: '#f1c40f', fontWeight: 'bold' }}>
-                            {"★".repeat(appt.rating)}{"☆".repeat(5-appt.rating)} 
-                            <span style={{ color: '#333', fontWeight: 'normal', fontSize: '13px', marginLeft: '8px' }}>
-                                "{appt.feedback}"
-                            </span>
-                        </div>
-                    ) : (
-                        <div>
-                            <p style={{ margin: '0 0 5px 0', fontSize: '12px', fontWeight: 'bold', color: '#555' }}>Rate your therapy:</p>
-                            <div style={{ display: 'flex', gap: '5px', marginBottom: '5px' }}>
-                                {[1,2,3,4,5].map(star => (
-                                    <span 
-                                        key={star} 
-                                        style={{ cursor: 'pointer', fontSize: '20px', color: (ratingInput[appt._id]?.rating || 0) >= star ? '#f1c40f' : '#ccc' }}
-                                        onClick={() => setRatingInput({ ...ratingInput, [appt._id]: { ...ratingInput[appt._id], rating: star } })}
-                                    >★</span>
-                                ))}
-                            </div>
-                            <input 
-                                type="text" 
-                                placeholder="Write a review..." 
-                                style={{ width: '70%', padding: '5px', borderRadius: '4px', border: '1px solid #ddd', fontSize: '12px' }}
-                                value={ratingInput[appt._id]?.feedback || ''}
-                                onChange={(e) => setRatingInput({ ...ratingInput, [appt._id]: { ...ratingInput[appt._id], feedback: e.target.value } })}
-                            />
-                            <button 
-                                onClick={() => submitFeedback(appt._id)}
-                                style={{ marginLeft: '8px', padding: '5px 10px', background: '#27ae60', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}
-                            >Submit</button>
+                    {appt.doctor && (
+                        <div style={{ fontSize: '13px', color: theme.textSec, lineHeight: '1.6' }}>
+                            👨‍⚕️ Dr. {appt.doctor.name} <br/> 📧 {appt.doctor.email}
                         </div>
                     )}
                   </div>
+                ))}
+            </div>
+          </div>
+
+          {/* History */}
+          <div style={cardStyle}>
+            <h4 style={{ fontSize: '24px', marginBottom: '16px' }}>Clinical History</h4>
+            <input style={{ ...inputStyle, marginBottom: '16px' }} placeholder="Search past sessions..." value={historySearch} onChange={(e) => setHistorySearch(e.target.value)} />
+            <div style={{ maxHeight: '350px', overflowY: 'auto' }}>
+              {filteredHistory.map(appt => (
+                <div key={appt._id} style={{ padding: '16px', borderRadius: '16px', marginBottom: '16px', border: `1px solid ${theme.border}` }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                    <strong style={{fontSize: '14px'}}>{new Date(appt.appointmentDate).toLocaleDateString()}</strong>
+                    <span style={{ fontSize: '12px', color: theme.textSec }}>Dr. {appt.doctor?.name}</span>
+                  </div>
+                  <p style={{ margin: '4px 0', fontSize: '14px', fontStyle: 'italic' }}>"{appt.reason}"</p>
+                  <div style={{ background: theme.bg, padding: '10px', borderRadius: '8px', fontSize: '13px', marginTop: '8px', color: theme.textMain }}>
+                    <strong>Notes:</strong> {appt.medicalNotes}
+                  </div>
+                  
+                  {!appt.rating && (
+                    <div style={{ marginTop: '16px', paddingTop: '12px', borderTop: `1px solid ${theme.border}` }}>
+                      <p style={{ fontSize: '12px', fontWeight: '600', marginBottom: '8px' }}>How was this session?</p>
+                      <div style={{ display: 'flex', gap: '6px', marginBottom: '10px' }}>
+                          {[1,2,3,4,5].map(star => (
+                              <span key={star} style={{ cursor: 'pointer', fontSize: '20px', color: (ratingInput[appt._id]?.rating || 0) >= star ? '#F59E0B' : theme.border }}
+                                  onClick={() => setRatingInput({ ...ratingInput, [appt._id]: { ...ratingInput[appt._id], rating: star } })}>★</span>
+                          ))}
+                      </div>
+                      <div style={{display:'flex', gap:'8px'}}>
+                        <input style={{...inputStyle, padding:'8px'}} placeholder="Review..." value={ratingInput[appt._id]?.feedback || ''} onChange={(e) => setRatingInput({ ...ratingInput, [appt._id]: { ...ratingInput[appt._id], feedback: e.target.value } })} />
+                        <button onClick={() => submitFeedback(appt._id)} style={{ padding: '8px 16px', background: theme.success, color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '12px' }}>Submit</button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
