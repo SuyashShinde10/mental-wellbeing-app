@@ -23,11 +23,11 @@ const DoctorDashboard = () => {
   const fetchData = async () => {
     try {
       // Fetch Patients assigned to this doctor
-      const resPatients = await axios.get('http://localhost:5000/api/users/mypatients', config);
+      const resPatients = await axios.get('https://mental-wellbeing-app-sandy.vercel.app/api/users/mypatients', config);
       setPatients(resPatients.data);
 
       // Fetch Appointments (Sessions)
-      const resAppts = await axios.get('http://localhost:5000/api/appointments/admin', config);
+      const resAppts = await axios.get('https://mental-wellbeing-app-sandy.vercel.app/api/appointments/admin', config);
       // Filter for confirmed appointments assigned to this doctor
       setAppointments(resAppts.data.filter(a => a.doctor?._id === userInfo._id && a.status === 'Confirmed'));
 
@@ -43,7 +43,7 @@ const DoctorDashboard = () => {
   const handleStatusToggle = async () => {
     try {
       const newStatus = !isAvailable;
-      await axios.put('http://localhost:5000/api/users/status', { isAvailable: newStatus }, config);
+      await axios.put('https://mental-wellbeing-app-sandy.vercel.app/api/users/status', { isAvailable: newStatus }, config);
       setIsAvailable(newStatus);
       const updatedUser = { ...userInfo, isAvailable: newStatus };
       localStorage.setItem('userInfo', JSON.stringify(updatedUser));
@@ -54,7 +54,7 @@ const DoctorDashboard = () => {
     setSelectedPatient(patient);
     setTaskSearch(''); // Reset search when switching patients
     try {
-      const { data } = await axios.get(`http://localhost:5000/api/tasks/patient/${patient._id}`, config);
+      const { data } = await axios.get(`https://mental-wellbeing-app-sandy.vercel.app/api/tasks/patient/${patient._id}`, config);
       setPatientTasks(data);
     } catch (error) { console.error('Error fetching tasks'); }
   };
@@ -63,7 +63,7 @@ const DoctorDashboard = () => {
     e.preventDefault();
     if (!newTask || !selectedPatient) return;
     try {
-      const { data } = await axios.post('http://localhost:5000/api/tasks', {
+      const { data } = await axios.post('https://mental-wellbeing-app-sandy.vercel.app/api/tasks', {
         text: newTask,
         patientId: selectedPatient._id
       }, config);
@@ -75,7 +75,7 @@ const DoctorDashboard = () => {
   const handleDeleteTask = async (taskId) => {
     if(!window.confirm("Are you sure you want to delete this task?")) return;
     try {
-        await axios.delete(`http://localhost:5000/api/tasks/${taskId}`, config);
+        await axios.delete(`https://mental-wellbeing-app-sandy.vercel.app/api/tasks/${taskId}`, config);
         setPatientTasks(patientTasks.filter(t => t._id !== taskId));
     } catch (error) { alert('Error deleting task'); }
   };
@@ -84,7 +84,7 @@ const DoctorDashboard = () => {
     const notes = medicalNotesMap[apptId];
     if (!notes) return alert("Please enter medical notes.");
     try {
-      await axios.put(`http://localhost:5000/api/appointments/${apptId}/complete`, { medicalNotes: notes }, config);
+      await axios.put(`https://mental-wellbeing-app-sandy.vercel.app/api/appointments/${apptId}/complete`, { medicalNotes: notes }, config);
       alert('Session Completed!');
       fetchData();
     } catch (error) { alert('Error finalizing appointment'); }

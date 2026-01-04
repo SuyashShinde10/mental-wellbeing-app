@@ -16,11 +16,11 @@ const AdminDashboard = () => {
 
   const fetchData = async () => {
     try {
-      const userRes = await axios.get('http://localhost:5000/api/admin/users', config);
+      const userRes = await axios.get('https://mental-wellbeing-app-sandy.vercel.app/api/admin/users', config);
       setDoctors(userRes.data.doctors || []);
       setAllPatients(userRes.data.patients || []);
       
-      const apptRes = await axios.get('http://localhost:5000/api/appointments/admin', config);
+      const apptRes = await axios.get('https://mental-wellbeing-app-sandy.vercel.app/api/appointments/admin', config);
       setAppointments(apptRes.data || []);
     } catch (error) { console.error('Error fetching data'); }
   };
@@ -34,7 +34,7 @@ const AdminDashboard = () => {
     const doctorId = selectedDoctorMap[apptId];
     if (!doctorId) return alert("Select a doctor");
     try {
-      await axios.put(`http://localhost:5000/api/appointments/${apptId}/assign`, { doctorId }, config);
+      await axios.put(`https://mental-wellbeing-app-sandy.vercel.app/api/appointments/${apptId}/assign`, { doctorId }, config);
       alert('Doctor Assigned Successfully!');
       fetchData();
     } catch (error) { 

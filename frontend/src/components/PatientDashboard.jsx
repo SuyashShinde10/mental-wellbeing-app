@@ -34,12 +34,12 @@ const PatientDashboard = () => {
 
   const fetchTasks = useCallback(async () => {
     if (!userInfo) return;
-    try { const { data } = await axios.get('http://localhost:5000/api/tasks', config); setTasks(data); } catch (error) { console.error('Error fetching tasks'); }
+    try { const { data } = await axios.get('https://mental-wellbeing-app-sandy.vercel.app/api/tasks', config); setTasks(data); } catch (error) { console.error('Error fetching tasks'); }
   }, [userInfo?.token]);
 
   const fetchAppointments = useCallback(async () => {
     if (!userInfo) return;
-    try { const { data } = await axios.get('http://localhost:5000/api/appointments/my', config); setAppointments(data); } catch (error) { console.error('Error fetching appointments'); }
+    try { const { data } = await axios.get('https://mental-wellbeing-app-sandy.vercel.app/api/appointments/my', config); setAppointments(data); } catch (error) { console.error('Error fetching appointments'); }
   }, [userInfo?.token]);
 
   useEffect(() => {
@@ -58,7 +58,7 @@ const PatientDashboard = () => {
       async (position) => {
         try {
           const { latitude, longitude } = position.coords;
-          await axios.post('http://localhost:5000/api/alerts', { latitude, longitude }, config);
+          await axios.post('https://mental-wellbeing-app-sandy.vercel.app/api/alerts', { latitude, longitude }, config);
           alert('🚨 SOS SENT! Help is on the way.');
         } catch (error) { alert('Failed to send SOS.'); }
       },
@@ -70,7 +70,7 @@ const PatientDashboard = () => {
     e.preventDefault();
     if (!newAppt.date || !newAppt.time || !newAppt.reason) return alert("Please fill all fields.");
     try {
-        await axios.post('http://localhost:5000/api/appointments', {
+        await axios.post('https://mental-wellbeing-app-sandy.vercel.app/api/appointments', {
             appointmentDate: `${newAppt.date} ${newAppt.time}`,
             reason: newAppt.reason
         }, config);
@@ -85,7 +85,7 @@ const PatientDashboard = () => {
     if (!newContact.name || !newContact.phone) return;
     const updatedContacts = [...contacts, newContact];
     try {
-      const { data } = await axios.put('http://localhost:5000/api/users/contacts', { contacts: updatedContacts }, config);
+      const { data } = await axios.put('https://mental-wellbeing-app-sandy.vercel.app/api/users/contacts', { contacts: updatedContacts }, config);
       setContacts(data.emergencyContacts);
       const updatedUser = { ...userInfo, emergencyContacts: data.emergencyContacts };
       localStorage.setItem('userInfo', JSON.stringify(updatedUser));
@@ -97,7 +97,7 @@ const PatientDashboard = () => {
   const handleDeleteContact = async (index) => {
     const updatedContacts = contacts.filter((_, i) => i !== index);
     try {
-      const { data } = await axios.put('http://localhost:5000/api/users/contacts', { contacts: updatedContacts }, config);
+      const { data } = await axios.put('https://mental-wellbeing-app-sandy.vercel.app/api/users/contacts', { contacts: updatedContacts }, config);
       setContacts(data.emergencyContacts);
       const updatedUser = { ...userInfo, emergencyContacts: data.emergencyContacts };
       localStorage.setItem('userInfo', JSON.stringify(updatedUser));
@@ -108,7 +108,7 @@ const PatientDashboard = () => {
   const handleToggleTask = async (task) => {
     try {
       const updatedTask = { ...task, isCompleted: !task.isCompleted };
-      await axios.put(`http://localhost:5000/api/tasks/${task._id}`, updatedTask, config);
+      await axios.put(`https://mental-wellbeing-app-sandy.vercel.app/api/tasks/${task._id}`, updatedTask, config);
       setTasks(tasks.map((t) => (t._id === task._id ? updatedTask : t)));
     } catch (error) { alert('Error updating task'); }
   };
@@ -119,7 +119,7 @@ const PatientDashboard = () => {
       const input = ratingInput[apptId];
       if (!input || !input.rating) return alert("Please select a star rating");
       try {
-          await axios.put(`http://localhost:5000/api/appointments/${apptId}/feedback`, {
+          await axios.put(`https://mental-wellbeing-app-sandy.vercel.app/api/appointments/${apptId}/feedback`, {
               rating: input.rating,
               feedback: input.feedback
           }, config);

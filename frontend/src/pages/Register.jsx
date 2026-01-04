@@ -41,7 +41,7 @@ const Register = () => {
       };
 
       // Corrected API endpoint
-      await axios.post('http://localhost:5000/api/users', userData);
+      await axios.post('https://mental-wellbeing-app-sandy.vercel.app/api/users', userData);
       alert('Registration Successful! You have been assigned to a Care Admin.');
       navigate('/login');
     } catch (error) {

@@ -17,7 +17,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post('http://localhost:5000/api/users/login', formData);
+      const { data } = await axios.post('https://mental-wellbeing-app-sandy.vercel.app/api/users/login', formData);
       
       // 1. Save user info to local storage
       localStorage.setItem('userInfo', JSON.stringify(data));
