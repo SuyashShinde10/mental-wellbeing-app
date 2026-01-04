@@ -134,7 +134,6 @@ const PatientDashboard = () => {
       a.doctor?.name?.toLowerCase().includes(historySearch.toLowerCase())
   ));
 
-  // CHANGED: Now includes 'Completed' sessions so they appear in the status list
   const filteredOngoing = appointments.filter(a => 
       a.reason?.toLowerCase().includes(ongoingSearch.toLowerCase()) ||
       a.status?.toLowerCase().includes(ongoingSearch.toLowerCase())
@@ -217,7 +216,7 @@ const PatientDashboard = () => {
             </form>
           </div>
 
-          {/* ONGOING REQUESTS (Now shows ALL status) */}
+          {/* ONGOING REQUESTS (Updated with Email) */}
           <div style={cardStyle}>
             <h4>⏳ Appointment Status</h4>
             <input type="text" placeholder="Search..." style={{width:'100%', padding:'8px', borderRadius:'6px', border:'1px solid #ddd', marginBottom:'10px'}} value={ongoingSearch} onChange={(e) => setOngoingSearch(e.target.value)} />
@@ -238,7 +237,8 @@ const PatientDashboard = () => {
                       {/* Show Doctor info if Confirmed OR Completed */}
                       {(appt.status === 'Confirmed' || appt.status === 'Completed') && appt.doctor && (
                           <div style={{ marginTop: '5px', fontSize: '12px', color: style.color }}>
-                              👨‍⚕️ Dr. {appt.doctor.name} | 📞 {appt.doctor.phone}
+                              {/* THIS IS THE FIXED LINE: */}
+                              👨‍⚕️ Dr. {appt.doctor.name} | 📧 {appt.doctor.email} | 📞 {appt.doctor.phone}
                           </div>
                       )}
                     </div>
@@ -247,7 +247,7 @@ const PatientDashboard = () => {
             </div>
           </div>
 
-          {/* MEDICAL HISTORY (Kept for details/notes) */}
+          {/* MEDICAL HISTORY */}
           <div style={cardStyle}>
             <h4>📜 Medical History & Feedback</h4>
             <input type="text" placeholder="Search..." style={{width:'100%', padding:'8px', borderRadius:'6px', border:'1px solid #ddd', marginBottom:'10px'}} value={historySearch} onChange={(e) => setHistorySearch(e.target.value)} />
