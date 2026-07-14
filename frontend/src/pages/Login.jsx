@@ -28,7 +28,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post('https://mental-wellbeing-app-sandy.vercel.app/api/users/login', formData);
+      const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/api/users/login`, formData);
       localStorage.setItem('userInfo', JSON.stringify(data));
       alert('Login Successful!');
       

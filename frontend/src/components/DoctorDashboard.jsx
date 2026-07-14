@@ -35,10 +35,10 @@ const DoctorDashboard = () => {
 
   const fetchData = async () => {
     try {
-      const resPatients = await axios.get('https://mental-wellbeing-app-sandy.vercel.app/api/users/mypatients', config);
+      const resPatients = await axios.get(`${import.meta.env.VITE_API_URL}/api/users/mypatients`, config);
       setPatients(resPatients.data);
 
-      const resAppts = await axios.get('https://mental-wellbeing-app-sandy.vercel.app/api/appointments/admin', config);
+      const resAppts = await axios.get(`${import.meta.env.VITE_API_URL}/api/appointments/admin`, config);
       setAppointments(resAppts.data.filter(a => a.doctor?._id === userInfo._id && a.status === 'Confirmed'));
 
       setIsAvailable(userInfo.isAvailable ?? true);
@@ -53,7 +53,7 @@ const DoctorDashboard = () => {
   const handleStatusToggle = async () => {
     try {
       const newStatus = !isAvailable;
-      await axios.put('https://mental-wellbeing-app-sandy.vercel.app/api/users/status', { isAvailable: newStatus }, config);
+      await axios.put(`${import.meta.env.VITE_API_URL}/api/users/status`, { isAvailable: newStatus }, config);
       setIsAvailable(newStatus);
       const updatedUser = { ...userInfo, isAvailable: newStatus };
       localStorage.setItem('userInfo', JSON.stringify(updatedUser));
@@ -64,7 +64,7 @@ const DoctorDashboard = () => {
     setSelectedPatient(patient);
     setTaskSearch('');
     try {
-      const { data } = await axios.get(`https://mental-wellbeing-app-sandy.vercel.app/api/tasks/patient/${patient._id}`, config);
+      const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/tasks/patient/${patient._id}`, config);
       setPatientTasks(data);
     } catch (error) { console.error('Error fetching tasks'); }
   };
@@ -73,7 +73,7 @@ const DoctorDashboard = () => {
     e.preventDefault();
     if (!newTask || !selectedPatient) return;
     try {
-      const { data } = await axios.post('https://mental-wellbeing-app-sandy.vercel.app/api/tasks', {
+      const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/api/tasks`, {
         text: newTask,
         patientId: selectedPatient._id
       }, config);
@@ -86,7 +86,7 @@ const DoctorDashboard = () => {
     const notes = medicalNotesMap[apptId];
     if (!notes) return alert("Please enter medical notes.");
     try {
-      await axios.put(`https://mental-wellbeing-app-sandy.vercel.app/api/appointments/${apptId}/complete`, { medicalNotes: notes }, config);
+      await axios.put(`${import.meta.env.VITE_API_URL}/api/appointments/${apptId}/complete`, { medicalNotes: notes }, config);
       alert('Session Completed!');
       fetchData();
     } catch (error) { alert('Error finalizing appointment'); }

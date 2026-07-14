@@ -52,7 +52,7 @@ const Register = () => {
         emergencyContacts: emergencyContacts,
       };
 
-      await axios.post('https://mental-wellbeing-app-sandy.vercel.app/api/users', userData);
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/users`, userData);
       alert('Registration Successful! You have been assigned to a Care Admin.');
       navigate('/login');
     } catch (error) {
@@ -146,7 +146,7 @@ const Register = () => {
             >
               <option value="patient">Patient / User</option>
               <option value="doctor">Professional Doctor</option>
-              <option value="admin">System Administrator</option>
+              {/* Admin accounts are created internally — not via public registration */}
             </select>
           </div>
 

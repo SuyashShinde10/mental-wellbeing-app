@@ -5,29 +5,36 @@ const User = require('../models/User');
 const protect = asyncHandler(async (req, res, next) => {
   let token;
 
-  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
     try {
-      // Get token from header
+      // Extract token
       token = req.headers.authorization.split(' ')[1];
 
-      // Verify token
+      // Verify signature and expiry
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      // Get user from the token
+      // Attach user to request (exclude password)
       req.user = await User.findById(decoded.id).select('-password');
 
-      next();
+      if (!req.user) {
+        res.status(401);
+        throw new Error('Not authorized — user no longer exists');
+      }
+
+      return next();
     } catch (error) {
-      console.log(error);
+      // Log server-side only; never expose JWT internals to the client
+      console.error(`[Auth] Token verification failed: ${error.message}`);
       res.status(401);
-      throw new Error('Not authorized');
+      throw new Error('Not authorized — invalid token');
     }
   }
 
-  if (!token) {
-    res.status(401);
-    throw new Error('Not authorized, no token');
-  }
+  res.status(401);
+  throw new Error('Not authorized — no token provided');
 });
 
 module.exports = { protect };

@@ -6,33 +6,43 @@ const User = require('../models/User');
 // @desc    Register new user
 // @route   POST /api/users
 const registerUser = asyncHandler(async (req, res) => {
-  const { name, email, password, role, emergencyContacts } = req.body;
+  const { name, email, password, emergencyContacts } = req.body;
 
+  // Basic presence validation
   if (!name || !email || !password) {
     res.status(400);
-    throw new Error('Please add all fields');
+    throw new Error('Please provide name, email and password');
   }
 
-  const userExists = await User.findOne({ email });
+  // Password strength check
+  if (password.length < 8) {
+    res.status(400);
+    throw new Error('Password must be at least 8 characters long');
+  }
+
+  const userExists = await User.findOne({ email: email.toLowerCase().trim() });
   if (userExists) {
     res.status(400);
     throw new Error('User already exists');
   }
 
-  // Load Balancing: Find admin with fewest patients (Simplified)
+  // SECURITY FIX: Role is ALWAYS forced to 'patient' on self-registration.
+  // Only a logged-in admin can create doctor/admin accounts via a separate
+  // privileged route. Never trust a client-supplied role value here.
+  const role = 'patient';
+
+  // Load Balancing: Find admin with fewest patients
   let assignedAdmin = null;
-  if (role === 'patient') {
-    const admins = await User.find({ role: 'admin' });
-    if (admins.length > 0) {
-        assignedAdmin = admins[0]._id; 
-    }
+  const admins = await User.find({ role: 'admin' });
+  if (admins.length > 0) {
+    assignedAdmin = admins[0]._id;
   }
 
   const user = await User.create({
     name,
     email,
     password,
-    role: role || 'patient',
+    role,
     assignedAdmin,
     emergencyContacts: emergencyContacts || []
   });
@@ -74,10 +84,16 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc    Get user data
+// @desc    Get user data (sanitised — no password)
 // @route   GET /api/users/me
 const getMe = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user._id).populate('assignedDoctor');
+  const user = await User.findById(req.user._id)
+    .select('-password')
+    .populate('assignedDoctor', 'name email phone');
+  if (!user) {
+    res.status(404);
+    throw new Error('User not found');
+  }
   res.status(200).json(user);
 });
 
@@ -124,9 +140,13 @@ const getMyPatients = asyncHandler(async (req, res) => {
     res.json(patients);
 });
 
-// Utility: Generate JWT
+// Utility: Generate JWT with a short, sensible expiry
 const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' });
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    // SECURITY FIX: 30d expiry is too long for a health app with sensitive PII.
+    // Reduced to 7d. Implement refresh tokens for better UX if needed.
+    expiresIn: '7d',
+  });
 };
 
 // CRITICAL: Ensure ALL functions are exported here

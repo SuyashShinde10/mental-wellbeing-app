@@ -40,8 +40,20 @@ const completeAppointment = asyncHandler(async (req, res) => {
     const { medicalNotes } = req.body;
     const appointment = await Appointment.findById(req.params.id);
     if (!appointment) { res.status(404); throw new Error('Appointment not found'); }
+
+    // SECURITY: Only the assigned doctor can complete an appointment
+    if (
+      req.user.role !== 'doctor' ||
+      (appointment.doctor && appointment.doctor.toString() !== req.user.id)
+    ) {
+      res.status(403);
+      throw new Error('Not authorized to complete this appointment');
+    }
+
     appointment.status = 'Completed';
-    appointment.medicalNotes = medicalNotes;
+    appointment.medicalNotes = medicalNotes
+      ? String(medicalNotes).slice(0, 2000)
+      : '';
     await appointment.save();
     res.json({ message: 'Appointment completed', appointment });
 });
@@ -82,7 +94,7 @@ const addFeedback = asyncHandler(async (req, res) => {
 
     // Ensure only the patient who owns the appointment can review it
     if (appointment.patient.toString() !== req.user.id) {
-        res.status(401);
+        res.status(403);
         throw new Error('Not authorized to review this appointment');
     }
 
@@ -91,8 +103,15 @@ const addFeedback = asyncHandler(async (req, res) => {
         throw new Error('You can only rate completed sessions');
     }
 
-    appointment.rating = rating;
-    appointment.feedback = feedback;
+    // SECURITY: Validate rating is a number in 1–5, prevent NoSQL injection
+    const parsedRating = parseInt(rating, 10);
+    if (isNaN(parsedRating) || parsedRating < 1 || parsedRating > 5) {
+        res.status(400);
+        throw new Error('Rating must be an integer between 1 and 5');
+    }
+
+    appointment.rating = parsedRating;
+    appointment.feedback = feedback ? String(feedback).slice(0, 1000) : '';
     await appointment.save();
 
     res.json({ message: 'Review submitted successfully', appointment });
