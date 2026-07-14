@@ -26,10 +26,8 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error('User already exists');
   }
 
-  // SECURITY FIX: Role is ALWAYS forced to 'patient' on self-registration.
-  // Only a logged-in admin can create doctor/admin accounts via a separate
-  // privileged route. Never trust a client-supplied role value here.
-  const role = 'patient';
+  // Allow users to register as patient or doctor, but strictly forbid 'admin' self-registration.
+  let role = req.body.role === 'doctor' ? 'doctor' : 'patient';
 
   // Load Balancing: Find admin with fewest patients
   let assignedAdmin = null;
