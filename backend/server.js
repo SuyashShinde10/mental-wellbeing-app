@@ -23,15 +23,16 @@ const app = express();
 // 1. Set secure HTTP response headers (XSS, clickjacking, MIME sniffing, etc.)
 app.use(helmet());
 
-// 2. Restrictive CORS — only allow the deployed frontend origin
+// 2. Restrictive CORS — allow deployed frontend origins + dynamic vercel preview URLs
 const allowedOrigins = [
   process.env.FRONTEND_URL || 'http://localhost:5173',
   'https://mental-wellbeing-app-sandy.vercel.app',
+  'https://mental-wellbeing-app-cf86.vercel.app'
 ];
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (e.g. mobile apps, curl, Postman in dev)
-    if (!origin || allowedOrigins.includes(origin)) {
+    // Allow requests with no origin, allowed explicit origins, OR any vercel.app subdomain
+    if (!origin || allowedOrigins.includes(origin) || /\.vercel\.app$/.test(origin)) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));

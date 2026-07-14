@@ -1,5 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { LogOut, Home, User, Stethoscope, Shield } from 'lucide-react';
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -17,98 +19,97 @@ const Navbar = () => {
     return '/patient-dashboard';
   };
 
-  // Human-Centric Theme Matching
+  const getDashboardIcon = () => {
+    if (!userInfo) return <User size={16} />;
+    if (userInfo.role === 'admin') return <Shield size={16} />;
+    if (userInfo.role === 'doctor') return <Stethoscope size={16} />;
+    return <User size={16} />;
+  };
+
   const theme = {
-    bg: 'rgba(250, 250, 249, 0.8)', // Translucent stone/paper
-    textMain: '#292524', // Warm charcoal
-    textSec: '#57534E',  // Stone gray
-    primary: '#6366F1',  // Indigo
-    danger: '#ef4444',
-    border: '#E7E5E4',
+    bg: 'rgba(250, 250, 249, 0.75)',
+    textMain: '#292524',
+    textSec: '#57534E',
+    primary: '#6366F1',
+    danger: '#e11d48',
+    border: 'rgba(231, 229, 228, 0.5)',
   };
 
   const navStyle = {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '20px 40px',
-    backgroundColor: theme.bg,
-    backdropFilter: 'blur(10px)', // Adds a soft glass effect
+    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+    padding: '20px 48px', backgroundColor: theme.bg,
+    backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
     borderBottom: `1px solid ${theme.border}`,
-    position: 'sticky',
-    top: 0,
-    zIndex: 1000,
+    position: 'sticky', top: 0, zIndex: 1000,
     fontFamily: "'Inter', sans-serif"
   };
 
   const linkStyle = {
-    textDecoration: 'none',
-    color: theme.textSec,
-    fontWeight: '500',
-    fontSize: '15px',
-    marginLeft: '30px',
-    transition: 'color 0.2s ease',
-    cursor: 'pointer',
-    border: 'none',
-    background: 'none'
-  };
-
-  const logoStyle = {
-    textDecoration: 'none',
-    fontFamily: "'Instrument Serif', serif",
-    fontSize: '26px',
-    fontStyle: 'italic',
-    color: theme.textMain,
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px'
-  };
-
-  const joinBtnStyle = {
-    ...linkStyle,
-    backgroundColor: theme.textMain,
-    color: '#ffffff',
-    padding: '10px 24px',
-    borderRadius: '50px',
-    fontWeight: '500',
-    transition: 'transform 0.2s ease'
+    textDecoration: 'none', color: theme.textSec,
+    fontWeight: '500', fontSize: '15px', marginLeft: '32px',
+    display: 'flex', alignItems: 'center', gap: '6px',
+    cursor: 'pointer', border: 'none', background: 'none'
   };
 
   return (
-    <nav style={navStyle}>
-      {/* Brand Logo */}
-      <Link to={userInfo ? getDashboardPath() : "/"} style={logoStyle}>
+    <motion.nav 
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      style={navStyle}
+    >
+      <Link to={userInfo ? getDashboardPath() : "/"} style={{
+        textDecoration: 'none', fontFamily: "'Instrument Serif', serif",
+        fontSize: '28px', fontStyle: 'italic', color: theme.textMain,
+        letterSpacing: '-0.5px'
+      }}>
         Mindful.
       </Link>
       
       <div style={{ display: 'flex', alignItems: 'center' }}>
-        <Link to="/" style={linkStyle}>Home</Link>
+        <Link to="/" style={linkStyle}>
+          <motion.div whileHover={{ color: theme.textMain }} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Home size={16} /> Home
+          </motion.div>
+        </Link>
         
         {userInfo ? (
           <>
-            <Link to={getDashboardPath()} style={linkStyle}>Dashboard</Link>
-            <button 
+            <Link to={getDashboardPath()} style={linkStyle}>
+              <motion.div whileHover={{ color: theme.textMain }} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                {getDashboardIcon()} Dashboard
+              </motion.div>
+            </Link>
+            <motion.button 
+              whileHover={{ color: theme.danger, backgroundColor: '#FFE4E6' }}
               onClick={logoutHandler} 
-              style={{ ...linkStyle, color: theme.danger }}
+              style={{ ...linkStyle, color: theme.danger, padding: '8px 16px', borderRadius: '50px', transition: 'background-color 0.2s' }}
             >
-              Logout
-            </button>
+              <LogOut size={16} /> Logout
+            </motion.button>
           </>
         ) : (
           <>
-            <Link to="/login" style={linkStyle}>Login</Link>
-            <Link 
-              to="/register" 
-              style={joinBtnStyle}
-              onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
-              onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
-            >
-              Join Now
+            <Link to="/login" style={linkStyle}>
+              <motion.div whileHover={{ color: theme.textMain }}>Login</motion.div>
+            </Link>
+            <Link to="/register" style={{ textDecoration: 'none', marginLeft: '24px' }}>
+              <motion.div 
+                whileHover={{ scale: 1.05, y: -1 }}
+                whileTap={{ scale: 0.95 }}
+                style={{
+                  backgroundColor: theme.textMain, color: '#ffffff', padding: '10px 24px',
+                  borderRadius: '50px', fontWeight: '500', fontSize: '15px',
+                  boxShadow: '0 4px 14px rgba(0,0,0,0.1)'
+                }}
+              >
+                Join Now
+              </motion.div>
             </Link>
           </>
         )}
       </div>
-    </nav>
+    </motion.nav>
   );
 };
 

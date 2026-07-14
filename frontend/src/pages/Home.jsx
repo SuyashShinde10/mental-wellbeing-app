@@ -1,227 +1,155 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { Heart, Activity, ShieldAlert, ArrowRight } from 'lucide-react';
 
 const Home = () => {
-  // Human-centric Palette: Warmer, earthier, less "neon"
   const theme = {
-    bg: '#FAFAF9', // Stone/Paper white
+    bg: '#FAFAF9',
     surface: '#FFFFFF',
-    textMain: '#292524', // Warm charcoal, not pure black
-    textSec: '#57534E', // Stone gray
-    primary: '#6366F1', // Keeping your indigo, but we'll use it sparingly
+    textMain: '#292524',
+    textSec: '#57534E',
+    primary: '#6366F1',
     primarySoft: '#E0E7FF',
-    accent: '#F0ABFC', // Soft orchid
-    success: '#34D399',
-    blob1: '#FFD6D6', // Soft peach
-    blob2: '#C7D2FE', // Soft periwinkle
+    blob1: '#FFD6D6',
+    blob2: '#C7D2FE',
+  };
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } }
   };
 
   return (
     <div style={{ backgroundColor: theme.bg, minHeight: '100vh', position: 'relative', overflow: 'hidden' }}>
-      {/* INJECTING GLOBAL STYLES 
-        This adds the fonts and smooth animations that inline styles can't do.
-      */}
       <style>
         {`
           @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap');
-          
           body { margin: 0; }
-          
-          .human-touch-text {
-            font-family: 'Instrument Serif', serif;
-            font-style: italic;
-          }
-          
-          .fade-in-up {
-            animation: fadeInUp 0.8s ease-out forwards;
-            opacity: 0;
-            transform: translateY(20px);
-          }
-
-          .card-hover {
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-          }
-          .card-hover:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.1);
-          }
-
-          @keyframes fadeInUp {
-            to { opacity: 1; transform: translateY(0); }
-          }
-
-          /* Grain texture to remove the "digital smoothness" */
           .noise-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 50;
-            opacity: 0.03;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 50; opacity: 0.03;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
           }
         `}
       </style>
-
-      {/* Texture Overlay for "Paper" feel */}
       <div className="noise-overlay"></div>
 
-      {/* Ambient Background Blobs (Organic, not perfect circles) */}
-      <div style={{
-        position: 'absolute', top: '-10%', right: '-5%', width: '600px', height: '600px',
-        background: `radial-gradient(circle, ${theme.blob2} 0%, transparent 70%)`,
-        opacity: 0.5, filter: 'blur(80px)', zIndex: 0
-      }}></div>
-      <div style={{
-        position: 'absolute', bottom: '10%', left: '-10%', width: '500px', height: '500px',
-        background: `radial-gradient(circle, ${theme.blob1} 0%, transparent 70%)`,
-        opacity: 0.4, filter: 'blur(80px)', zIndex: 0
-      }}></div>
+      {/* Ambient Blobs */}
+      <motion.div 
+        animate={{ scale: [1, 1.05, 1], rotate: [0, 5, -5, 0] }} 
+        transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+        style={{ position: 'absolute', top: '-10%', right: '-5%', width: '600px', height: '600px', background: `radial-gradient(circle, ${theme.blob2} 0%, transparent 70%)`, opacity: 0.4, filter: 'blur(80px)', zIndex: 0 }} 
+      />
+      <motion.div 
+        animate={{ scale: [1, 1.1, 1], rotate: [0, -5, 5, 0] }} 
+        transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+        style={{ position: 'absolute', bottom: '10%', left: '-10%', width: '500px', height: '500px', background: `radial-gradient(circle, ${theme.blob1} 0%, transparent 70%)`, opacity: 0.3, filter: 'blur(80px)', zIndex: 0 }} 
+      />
 
-      {/* Main Container */}
       <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 24px', position: 'relative', zIndex: 1 }}>
-        
-        {/* Navigation Placeholder (Minimal) */}
-        <nav style={{ padding: '32px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          {/* <div style={{ fontWeight: '700', fontSize: '20px', fontFamily: "'Inter', sans-serif", color: theme.textMain }}>
-            Mindful.
-          </div> */}
-          {/* <Link to="/login" style={{ textDecoration: 'none', color: theme.textSec, fontWeight: '500', fontFamily: "'Inter', sans-serif" }}>
-            Sign In
-          </Link> */}
-        </nav>
+        <nav style={{ padding: '32px 0' }}></nav>
 
-        {/* HERO SECTION */}
-        <header style={{ padding: '80px 0 100px', textAlign: 'center' }}>
-          <div className="fade-in-up" style={{ animationDelay: '0.1s' }}>
+        <motion.header 
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          style={{ padding: '60px 0 100px', textAlign: 'center' }}
+        >
+          <motion.div variants={itemVariants}>
             <span style={{ 
-              backgroundColor: theme.surface, 
-              border: `1px solid ${theme.primarySoft}`,
-              color: theme.primary,
-              padding: '6px 16px', 
-              borderRadius: '100px', 
-              fontSize: '13px', 
-              fontWeight: '600',
-              fontFamily: "'Inter', sans-serif",
-              letterSpacing: '0.5px',
-              display: 'inline-block',
-              marginBottom: '24px'
+              backgroundColor: theme.surface, border: `1px solid ${theme.primarySoft}`, color: theme.primary,
+              padding: '8px 20px', borderRadius: '100px', fontSize: '13px', fontWeight: '600',
+              fontFamily: "'Inter', sans-serif", letterSpacing: '0.5px', display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '24px',
+              boxShadow: '0 4px 12px rgba(99, 102, 241, 0.1)'
             }}>
-              ✨ A Safe Space for Your Mind
+              <Heart size={14} /> A Safe Space for Your Mind
             </span>
-          </div>
+          </motion.div>
 
-          <h1 className="fade-in-up" style={{ 
-            animationDelay: '0.2s',
-            fontSize: 'clamp(48px, 6vw, 76px)', 
-            color: theme.textMain, 
-            lineHeight: '1.1', 
-            fontFamily: "'Instrument Serif', serif", // The Serif font makes it feel human/editorial
-            fontWeight: '400',
-            marginBottom: '24px',
-            letterSpacing: '-1.5px'
+          <motion.h1 variants={itemVariants} style={{ 
+            fontSize: 'clamp(48px, 7vw, 84px)', color: theme.textMain, lineHeight: '1.05', 
+            fontFamily: "'Instrument Serif', serif", fontWeight: '400', marginBottom: '24px', letterSpacing: '-2px'
           }}>
             Find your balance <br />
-            <span style={{ color: theme.textSec, opacity: 0.6 }}>in a noisy world.</span>
-          </h1>
+            <span style={{ color: theme.textSec, opacity: 0.7 }}>in a noisy world.</span>
+          </motion.h1>
 
-          <p className="fade-in-up" style={{ 
-            animationDelay: '0.3s',
-            fontSize: '18px', 
-            color: theme.textSec, 
-            maxWidth: '540px', 
-            margin: '0 auto 40px', 
-            lineHeight: '1.6',
-            fontFamily: "'Inter', sans-serif"
+          <motion.p variants={itemVariants} style={{ 
+            fontSize: '19px', color: theme.textSec, maxWidth: '580px', margin: '0 auto 48px', 
+            lineHeight: '1.7', fontFamily: "'Inter', sans-serif"
           }}>
             Track moods, complete wellness tasks, and access instant support. 
-            No algorithms, just a compassionate space for you.
-          </p>
+            No algorithms, just a compassionate space for you and your care team.
+          </motion.p>
 
-          <div className="fade-in-up" style={{ animationDelay: '0.4s' }}>
-            <Link 
-              to="/register" 
-              style={{ 
-                padding: '18px 42px',
-                backgroundColor: theme.textMain,
-                color: '#fff',
-                textDecoration: 'none',
-                borderRadius: '50px',
-                fontWeight: '500',
-                fontSize: '16px',
-                fontFamily: "'Inter', sans-serif",
-                display: 'inline-block',
-                transition: 'transform 0.2s',
-              }}
-              onMouseOver={(e) => e.target.style.transform = 'scale(1.02)'}
-              onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
-            >
-              Start your journey
+          <motion.div variants={itemVariants} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+            <Link to="/register" style={{ textDecoration: 'none' }}>
+              <motion.button 
+                whileHover={{ scale: 1.03, y: -2 }}
+                whileTap={{ scale: 0.97 }}
+                style={{ 
+                  padding: '18px 48px', backgroundColor: theme.textMain, color: '#fff', border: 'none',
+                  borderRadius: '50px', fontWeight: '500', fontSize: '16px', fontFamily: "'Inter', sans-serif",
+                  display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer',
+                  boxShadow: '0 10px 25px rgba(41, 37, 36, 0.2)'
+                }}
+              >
+                Start your journey <ArrowRight size={18} />
+              </motion.button>
             </Link>
-            
-            <div style={{ marginTop: '20px', fontSize: '14px', color: theme.textSec, fontFamily: "'Inter', sans-serif" }}>
-              Free forever for individuals.
-            </div>
-          </div>
-        </header>
+            <span style={{ fontSize: '14px', color: theme.textSec, fontFamily: "'Inter', sans-serif" }}>Free forever for individuals.</span>
+          </motion.div>
+        </motion.header>
 
-        {/* FEATURES GRID - Bento Style */}
-        <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px', paddingBottom: '120px' }}>
-          
-          {/* Feature 1 */}
-          <div className="card-hover fade-in-up" style={{ 
-            animationDelay: '0.5s',
-            background: theme.surface, 
-            padding: '40px', 
-            borderRadius: '24px', 
-            border: '1px solid rgba(0,0,0,0.03)',
-            display: 'flex', flexDirection: 'column', justifyContent: 'space-between'
+        <motion.section 
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px', paddingBottom: '120px' }}
+        >
+          {/* Card 1 */}
+          <motion.div whileHover={{ y: -8, boxShadow: '0 25px 50px -12px rgba(0,0,0,0.08)' }} style={{ 
+            background: theme.surface, padding: '40px', borderRadius: '32px', border: '1px solid rgba(0,0,0,0.03)',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.02)', display: 'flex', flexDirection: 'column', transition: 'all 0.3s ease'
           }}>
-            <div>
-              <div style={{ width: '48px', height: '48px', background: '#FEF3C7', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px', fontSize: '20px' }}>🧘‍♀️</div>
-              <h3 style={{ fontSize: '24px', fontFamily: "'Instrument Serif', serif", marginBottom: '12px', color: theme.textMain }}>Daily Inspiration</h3>
-              <p style={{ color: theme.textSec, lineHeight: '1.5', fontFamily: "'Inter', sans-serif", fontSize: '15px' }}>
-                Handpicked insights curated to strengthen your resilience. Not generated by bots, but written by therapists.
-              </p>
+            <div style={{ width: '56px', height: '56px', background: '#FEF3C7', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px', color: '#D97706' }}>
+              <Heart size={28} />
             </div>
-          </div>
+            <h3 style={{ fontSize: '26px', fontFamily: "'Instrument Serif', serif", marginBottom: '12px', color: theme.textMain }}>Daily Inspiration</h3>
+            <p style={{ color: theme.textSec, lineHeight: '1.6', fontFamily: "'Inter', sans-serif", fontSize: '16px' }}>Handpicked insights curated to strengthen your resilience. Written by real therapists, not bots.</p>
+          </motion.div>
 
-          {/* Feature 2 */}
-          <div className="card-hover fade-in-up" style={{ 
-            animationDelay: '0.6s',
-            background: theme.surface, 
-            padding: '40px', 
-            borderRadius: '24px', 
-            border: '1px solid rgba(0,0,0,0.03)',
-            display: 'flex', flexDirection: 'column', justifyContent: 'space-between'
+          {/* Card 2 */}
+          <motion.div whileHover={{ y: -8, boxShadow: '0 25px 50px -12px rgba(0,0,0,0.08)' }} style={{ 
+            background: theme.surface, padding: '40px', borderRadius: '32px', border: '1px solid rgba(0,0,0,0.03)',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.02)', display: 'flex', flexDirection: 'column', transition: 'all 0.3s ease'
           }}>
-            <div>
-              <div style={{ width: '48px', height: '48px', background: '#D1FAE5', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px', fontSize: '20px' }}>🌿</div>
-              <h3 style={{ fontSize: '24px', fontFamily: "'Instrument Serif', serif", marginBottom: '12px', color: theme.textMain }}>Mood Patterns</h3>
-              <p style={{ color: theme.textSec, lineHeight: '1.5', fontFamily: "'Inter', sans-serif", fontSize: '15px' }}>
-                Understand your emotional landscape. Visualize your triggers and triumphs over time.
-              </p>
+            <div style={{ width: '56px', height: '56px', background: '#D1FAE5', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px', color: '#059669' }}>
+              <Activity size={28} />
             </div>
-          </div>
+            <h3 style={{ fontSize: '26px', fontFamily: "'Instrument Serif', serif", marginBottom: '12px', color: theme.textMain }}>Mood Patterns</h3>
+            <p style={{ color: theme.textSec, lineHeight: '1.6', fontFamily: "'Inter', sans-serif", fontSize: '16px' }}>Understand your emotional landscape. Visualize your triggers and triumphs over time.</p>
+          </motion.div>
 
-          {/* Feature 3 */}
-          <div className="card-hover fade-in-up" style={{ 
-            animationDelay: '0.7s',
-            background: '#FFF1F2', /* Subtle red tint for SOS */
-            padding: '40px', 
-            borderRadius: '24px', 
-            border: '1px solid rgba(239, 68, 68, 0.05)',
-            display: 'flex', flexDirection: 'column', justifyContent: 'space-between'
+          {/* Card 3 */}
+          <motion.div whileHover={{ y: -8, boxShadow: '0 25px 50px -12px rgba(239, 68, 68, 0.15)' }} style={{ 
+            background: '#FFF1F2', padding: '40px', borderRadius: '32px', border: '1px solid rgba(239, 68, 68, 0.08)',
+            boxShadow: '0 4px 20px rgba(239, 68, 68, 0.05)', display: 'flex', flexDirection: 'column', transition: 'all 0.3s ease'
           }}>
-            <div>
-              <div style={{ width: '48px', height: '48px', background: '#FECDD3', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px', fontSize: '20px' }}>❤️</div>
-              <h3 style={{ fontSize: '24px', fontFamily: "'Instrument Serif', serif", marginBottom: '12px', color: '#881337' }}>SOS Support</h3>
-              <p style={{ color: '#9F1239', lineHeight: '1.5', fontFamily: "'Inter', sans-serif", fontSize: '15px' }}>
-                When things get heavy, a single tap notifies your safety circle with your location. You are never alone.
-              </p>
+            <div style={{ width: '56px', height: '56px', background: '#FECDD3', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px', color: '#E11D48' }}>
+              <ShieldAlert size={28} />
             </div>
-          </div>
-
-        </section>
+            <h3 style={{ fontSize: '26px', fontFamily: "'Instrument Serif', serif", marginBottom: '12px', color: '#9F1239' }}>SOS Support</h3>
+            <p style={{ color: '#9F1239', opacity: 0.9, lineHeight: '1.6', fontFamily: "'Inter', sans-serif", fontSize: '16px' }}>When things get heavy, a single tap notifies your safety circle with your location. You are never alone.</p>
+          </motion.div>
+        </motion.section>
       </div>
     </div>
   );
