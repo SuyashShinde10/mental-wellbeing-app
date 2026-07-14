@@ -13,11 +13,18 @@ const taskRoutes = require('./routes/taskRoutes');
 const alertRoutes = require('./routes/alertRoutes');
 const moodRoutes = require('./routes/moodRoutes');
 
-// Connect to Database
-connectDB();
-
 const app = express();
 app.set('trust proxy', 1);
+
+// Serverless DB Connection Middleware
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 
 // ─── Security Middleware ──────────────────────────────────────────────────────
 
