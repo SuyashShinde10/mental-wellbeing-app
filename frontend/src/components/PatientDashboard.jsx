@@ -111,6 +111,26 @@ const PatientDashboard = () => {
       } catch (error) { alert("Error submitting feedback"); }
   };
 
+  const handleAddContact = async () => {
+    if (!newContact.name || !newContact.phone) return alert('Fill name and phone');
+    try {
+      const updatedContacts = [...contacts, newContact];
+      await axios.put(`${import.meta.env.VITE_API_URL}/api/users/contacts`, { contacts: updatedContacts }, config);
+      setContacts(updatedContacts);
+      setNewContact({ name: '', phone: '' });
+      localStorage.setItem('userInfo', JSON.stringify({ ...userInfo, emergencyContacts: updatedContacts }));
+    } catch (error) { alert('Error adding contact'); }
+  };
+
+  const handleDeleteContact = async (index) => {
+    try {
+      const updatedContacts = contacts.filter((_, i) => i !== index);
+      await axios.put(`${import.meta.env.VITE_API_URL}/api/users/contacts`, { contacts: updatedContacts }, config);
+      setContacts(updatedContacts);
+      localStorage.setItem('userInfo', JSON.stringify({ ...userInfo, emergencyContacts: updatedContacts }));
+    } catch (error) { alert('Error deleting contact'); }
+  };
+
   // Filters
   const filteredHistory = appointments.filter(a => a.status === 'Completed' && (
       a.reason?.toLowerCase().includes(historySearch.toLowerCase()) ||
