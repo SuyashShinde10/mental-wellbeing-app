@@ -150,6 +150,55 @@ const Home = () => {
             <p style={{ color: '#9F1239', opacity: 0.9, lineHeight: '1.6', fontFamily: "'Inter', sans-serif", fontSize: '16px' }}>When things get heavy, a single tap notifies your safety circle with your location. You are never alone.</p>
           </motion.div>
         </motion.section>
+
+        {/* Roles Walkthrough Section */}
+        <motion.section 
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          style={{ paddingBottom: '120px' }}
+        >
+          <div style={{ textAlign: 'center', marginBottom: '60px' }}>
+            <h2 style={{ fontSize: '42px', fontFamily: "'Instrument Serif', serif", color: theme.textMain, marginBottom: '16px' }}>A Unified Platform</h2>
+            <p style={{ color: theme.textSec, fontSize: '18px', maxWidth: '600px', margin: '0 auto', lineHeight: '1.6', fontFamily: "'Inter', sans-serif" }}>Mindful connects patients, doctors, and care administrators in one seamless ecosystem.</p>
+          </div>
+          
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
+            <div style={{ background: theme.surface, padding: '32px', borderRadius: '24px', border: `1px solid rgba(0,0,0,0.03)`, boxShadow: '0 4px 20px rgba(0,0,0,0.02)' }}>
+              <div style={{ fontSize: '32px', marginBottom: '16px' }}>👤</div>
+              <h4 style={{ fontSize: '24px', fontFamily: "'Instrument Serif', serif", color: theme.textMain, marginBottom: '12px', marginTop: 0 }}>For Patients</h4>
+              <ul style={{ paddingLeft: '20px', color: theme.textSec, fontFamily: "'Inter', sans-serif", fontSize: '15px', lineHeight: '1.7', margin: 0 }}>
+                <li>Daily mood & thought journaling</li>
+                <li>Book sessions with your assigned doctor</li>
+                <li>Track and complete therapeutic tasks</li>
+                <li>Instant SOS alerts to trusted contacts</li>
+              </ul>
+            </div>
+            
+            <div style={{ background: theme.surface, padding: '32px', borderRadius: '24px', border: `1px solid rgba(0,0,0,0.03)`, boxShadow: '0 4px 20px rgba(0,0,0,0.02)' }}>
+              <div style={{ fontSize: '32px', marginBottom: '16px' }}>🩺</div>
+              <h4 style={{ fontSize: '24px', fontFamily: "'Instrument Serif', serif", color: theme.textMain, marginBottom: '12px', marginTop: 0 }}>For Professionals</h4>
+              <ul style={{ paddingLeft: '20px', color: theme.textSec, fontFamily: "'Inter', sans-serif", fontSize: '15px', lineHeight: '1.7', margin: 0 }}>
+                <li>Manage your assigned patient roster</li>
+                <li>Write and securely store clinical notes</li>
+                <li>Track patient progress and goals</li>
+                <li>Toggle real-time availability status</li>
+              </ul>
+            </div>
+
+            <div style={{ background: theme.surface, padding: '32px', borderRadius: '24px', border: `1px solid rgba(0,0,0,0.03)`, boxShadow: '0 4px 20px rgba(0,0,0,0.02)' }}>
+              <div style={{ fontSize: '32px', marginBottom: '16px' }}>🛡️</div>
+              <h4 style={{ fontSize: '24px', fontFamily: "'Instrument Serif', serif", color: theme.textMain, marginBottom: '12px', marginTop: 0 }}>For Administrators</h4>
+              <ul style={{ paddingLeft: '20px', color: theme.textSec, fontFamily: "'Inter', sans-serif", fontSize: '15px', lineHeight: '1.7', margin: 0 }}>
+                <li>Complete overview of all platform users</li>
+                <li>Match patients to the right professionals</li>
+                <li>Ensure workload balance across doctors</li>
+                <li>Maintain system security and access</li>
+              </ul>
+            </div>
+          </div>
+        </motion.section>
       </div>
     </div>
   );
