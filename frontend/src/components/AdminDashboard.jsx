@@ -85,24 +85,33 @@ const AdminDashboard = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
       style={{ padding: '40px', background: theme.bg, minHeight: '100vh', fontFamily: "'Inter', sans-serif" }}
+      className="mobile-padding"
     >
       <style>
         {`
           @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap');
-          h2, h3 { font-family: 'Instrument Serif', serif; font-weight: 400; }
+          h2, h3, .serif { font-family: 'Instrument Serif', serif; font-weight: 400; }
+          .badge { padding: 4px 10px; borderRadius: 100px; fontSize: 11px; fontWeight: 600; textTransform: uppercase; letterSpacing: 0.5px; }
+          .responsive-grid { display: grid; grid-template-columns: 1fr 1fr; }
+          .header-flex { display: flex; justify-content: space-between; alignItems: center; }
+          @media (max-width: 768px) {
+            .responsive-grid { grid-template-columns: 1fr !important; }
+            .header-flex { flex-direction: column !important; align-items: flex-start !important; gap: 16px !important; }
+            .mobile-padding { padding: 20px !important; }
+          }
           .admin-table th { font-family: 'Inter', sans-serif; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; color: ${theme.textSec}; }
         `}
       </style>
 
-      {/* HEADER */}
-      <div style={{ ...cardStyle, display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderLeft: `6px solid ${theme.textMain}` }}>
+      {/* Header */}
+      <div className="header-flex" style={{ ...cardStyle, marginBottom: '32px', borderLeft: `6px solid ${theme.primary}` }}>
         <div>
           <h2 style={{ fontSize: '36px', margin: 0, color: theme.textMain }}>Panel <span style={{fontStyle:'italic'}}>Control.</span></h2>
           <p style={{ color: theme.textSec, fontSize: '15px', marginTop: '4px' }}>Welcome back, {userInfo?.name}</p>
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px', marginBottom: '32px' }}>
+      <div className="responsive-grid" style={{ gap: '32px', marginBottom: '32px' }}>
         
         {/* GLOBAL DOCTORS LIST */}
         <div style={cardStyle}>

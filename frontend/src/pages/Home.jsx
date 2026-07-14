@@ -36,6 +36,10 @@ const Home = () => {
             pointer-events: none; z-index: 50; opacity: 0.03;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
           }
+          @media (max-width: 768px) {
+            .mobile-header-padding { padding: 40px 0 60px !important; }
+            .mobile-btn { padding: 16px 32px !important; width: 100%; justify-content: center; }
+          }
         `}
       </style>
       <div className="noise-overlay"></div>
@@ -60,6 +64,7 @@ const Home = () => {
           initial="hidden"
           animate="visible"
           style={{ padding: '60px 0 100px', textAlign: 'center' }}
+          className="mobile-header-padding"
         >
           <motion.div variants={itemVariants}>
             <span style={{ 
@@ -99,6 +104,7 @@ const Home = () => {
                   display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer',
                   boxShadow: '0 10px 25px rgba(41, 37, 36, 0.2)'
                 }}
+                className="mobile-btn"
               >
                 Start your journey <ArrowRight size={18} />
               </motion.button>

@@ -167,17 +167,25 @@ const PatientDashboard = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
       style={{ padding: '40px', background: theme.bg, minHeight: '100vh', fontFamily: "'Inter', sans-serif" }}
+      className="mobile-padding"
     >
       <style>
         {`
           @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap');
           h2, h4, .serif { font-family: 'Instrument Serif', serif; font-weight: 400; }
           .status-badge { padding: 4px 10px; borderRadius: 100px; fontSize: 11px; fontWeight: 600; textTransform: uppercase; letterSpacing: 0.5px; }
+          .responsive-grid { display: grid; grid-template-columns: 1fr 1fr; }
+          .header-flex { display: flex; justify-content: space-between; alignItems: center; }
+          @media (max-width: 768px) {
+            .responsive-grid { grid-template-columns: 1fr !important; }
+            .header-flex { flex-direction: column !important; align-items: flex-start !important; gap: 16px !important; }
+            .mobile-padding { padding: 20px !important; }
+          }
         `}
       </style>
 
       {/* Header */}
-      <div style={{ ...cardStyle, display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px', borderLeft: `6px solid ${theme.primary}` }}>
+      <div className="header-flex" style={{ ...cardStyle, marginBottom: '32px', borderLeft: `6px solid ${theme.primary}` }}>
         <div>
           <h2 style={{ fontSize: '32px', margin: 0, color: theme.textMain }}>Welcome, <span style={{fontStyle:'italic'}}>{user?.name}</span></h2>
           <p style={{ margin: '4px 0 0 0', color: theme.textSec, fontSize: '15px' }}>Your mindful space for the day.</p>
@@ -187,7 +195,7 @@ const PatientDashboard = () => {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
+      <div className="responsive-grid" style={{ gap: '32px' }}>
         
         {/* Left Column */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>

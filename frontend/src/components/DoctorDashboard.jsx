@@ -130,17 +130,25 @@ const DoctorDashboard = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
       style={{ padding: '40px', background: theme.bg, minHeight: '100vh', fontFamily: "'Inter', sans-serif" }}
+      className="mobile-padding"
     >
       <style>
         {`
           @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap');
-          h2, h3 { font-family: 'Instrument Serif', serif; font-weight: 400; }
-          .patient-item:hover { background-color: ${theme.primarySoft} !important; }
+          h2, h3, h4, .serif { font-family: 'Instrument Serif', serif; font-weight: 400; }
+          .badge { padding: 4px 10px; borderRadius: 100px; fontSize: 11px; fontWeight: 600; textTransform: uppercase; letterSpacing: 0.5px; }
+          .responsive-grid { display: grid; grid-template-columns: 1fr 2fr; }
+          .header-flex { display: flex; justify-content: space-between; alignItems: center; }
+          @media (max-width: 768px) {
+            .responsive-grid { grid-template-columns: 1fr !important; }
+            .header-flex { flex-direction: column !important; align-items: flex-start !important; gap: 16px !important; }
+            .mobile-padding { padding: 20px !important; }
+          }
         `}
       </style>
 
-      {/* HEADER */}
-      <div style={{ ...cardStyle, display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: `6px solid ${theme.primary}` }}>
+      {/* Header */}
+      <div className="header-flex" style={{ ...cardStyle, marginBottom: '32px', borderLeft: `6px solid ${theme.primary}` }}>
         <div>
           <h2 style={{ fontSize: '32px', margin: 0, color: theme.textMain }}>Welcome, <span style={{fontStyle:'italic'}}>Dr. {userInfo?.name}</span></h2>
           <div style={{ display: 'flex', alignItems: 'center', marginTop: '8px', fontSize: '14px' }}>
@@ -168,7 +176,7 @@ const DoctorDashboard = () => {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '32px' }}>
+      <div className="responsive-grid" style={{ gap: '32px' }}>
         
         {/* LEFT COLUMN: PATIENTS & CARE PLAN */}
         <div>

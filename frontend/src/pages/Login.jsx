@@ -68,6 +68,9 @@ const Login = () => {
             transform: translateY(-2px);
             box-shadow: 0 12px 20px -8px rgba(0,0,0,0.15);
           }
+          @media (max-width: 600px) {
+            .mobile-box { padding: 32px 24px !important; }
+          }
         `}
       </style>
 
@@ -83,7 +86,7 @@ const Login = () => {
         opacity: 0.3, filter: 'blur(60px)', zIndex: 0
       }}></div>
 
-      <div style={{ 
+      <div className="mobile-box" style={{ 
         background: theme.surface, 
         padding: '48px', 
         borderRadius: '32px', 

@@ -80,11 +80,6 @@ const Navbar = () => {
           </>
         ) : (
           <>
-            <Link to="/" style={linkStyle}>
-              <motion.div whileHover={{ color: theme.textMain }} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Home size={16} /> Home
-              </motion.div>
-            </Link>
             <Link to="/login" style={linkStyle}>
               <motion.div whileHover={{ color: theme.textMain }}>Login</motion.div>
             </Link>

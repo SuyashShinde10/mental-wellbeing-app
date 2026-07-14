@@ -85,6 +85,11 @@ const Register = () => {
             transform: translateY(-2px);
             box-shadow: 0 12px 20px -8px rgba(0,0,0,0.15);
           }
+          .responsive-grid { display: grid; grid-template-columns: 1fr 1fr; }
+          @media (max-width: 600px) {
+            .responsive-grid { grid-template-columns: 1fr !important; }
+            .mobile-box { padding: 32px 24px !important; }
+          }
         `}
       </style>
 
@@ -95,7 +100,7 @@ const Register = () => {
         opacity: 0.3, filter: 'blur(80px)', zIndex: 0
       }}></div>
 
-      <div style={{ 
+      <div className="mobile-box" style={{ 
         background: theme.surface, 
         padding: '48px', 
         borderRadius: '32px', 
@@ -150,7 +155,7 @@ const Register = () => {
             </select>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+          <div className="responsive-grid" style={{ gap: '12px' }}>
             <input type="text" name="name" placeholder="Full Name" onChange={handleChange} className="input-focus" style={{ padding: '14px 16px', borderRadius: '14px', border: `1px solid ${theme.border}`, fontSize: '15px', outline: 'none', backgroundColor: theme.bg }} required />
             <input type="tel" name="phone" placeholder="Phone (+91...)" onChange={handleChange} className="input-focus" style={{ padding: '14px 16px', borderRadius: '14px', border: `1px solid ${theme.border}`, fontSize: '15px', outline: 'none', backgroundColor: theme.bg }} required />
           </div>
@@ -176,7 +181,7 @@ const Register = () => {
               </h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 <input type="text" name="contactName" placeholder="Contact Name" onChange={handleChange} style={{ padding: '10px 14px', borderRadius: '10px', border: '1px solid white', fontSize: '14px', outline: 'none' }} required />
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                <div className="responsive-grid" style={{ gap: '10px' }}>
                   <input type="tel" name="contactPhone" placeholder="Phone" onChange={handleChange} style={{ padding: '10px 14px', borderRadius: '10px', border: '1px solid white', fontSize: '14px', outline: 'none' }} required />
                   <input type="text" name="contactRelation" placeholder="Relation" onChange={handleChange} style={{ padding: '10px 14px', borderRadius: '10px', border: '1px solid white', fontSize: '14px', outline: 'none' }} required />
                 </div>
