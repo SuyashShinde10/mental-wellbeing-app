@@ -67,29 +67,24 @@ const Navbar = () => {
       </Link>
       
       <div style={{ display: 'flex', alignItems: 'center' }}>
-        <Link to="/" style={linkStyle}>
-          <motion.div whileHover={{ color: theme.textMain }} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Home size={16} /> Home
-          </motion.div>
-        </Link>
         
         {userInfo ? (
           <>
-            <Link to={getDashboardPath()} style={linkStyle}>
-              <motion.div whileHover={{ color: theme.textMain }} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                {getDashboardIcon()} Dashboard
-              </motion.div>
-            </Link>
             <motion.button 
               whileHover={{ color: theme.danger, backgroundColor: '#FFE4E6' }}
               onClick={logoutHandler} 
-              style={{ ...linkStyle, color: theme.danger, padding: '8px 16px', borderRadius: '50px', transition: 'background-color 0.2s' }}
+              style={{ ...linkStyle, color: theme.danger, padding: '8px 16px', borderRadius: '50px', transition: 'background-color 0.2s', marginLeft: 'auto' }}
             >
               <LogOut size={16} /> Logout
             </motion.button>
           </>
         ) : (
           <>
+            <Link to="/" style={linkStyle}>
+              <motion.div whileHover={{ color: theme.textMain }} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Home size={16} /> Home
+              </motion.div>
+            </Link>
             <Link to="/login" style={linkStyle}>
               <motion.div whileHover={{ color: theme.textMain }}>Login</motion.div>
             </Link>
